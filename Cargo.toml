@@ -1,0 +1,12 @@
+[workspace]
+members = ["packages/native-core", "apps/desktop/src-tauri"]
+default-members = ["packages/native-core"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+
+[workspace.dependencies]
+serde_json = "=1.0.145"
