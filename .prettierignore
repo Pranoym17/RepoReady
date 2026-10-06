@@ -1,0 +1,8 @@
+package-lock.json
+Cargo.lock
+**/schemas/*.json
+**/dist/
+**/target/
+**/.astro/
+.cache/
+docs/prd/public-beta-v1.0.md

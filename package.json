@@ -1,0 +1,41 @@
+{
+  "name": "repoready",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "npm@11.13.0",
+  "engines": {
+    "node": "24.16.x",
+    "npm": "11.13.x"
+  },
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:desktop": "npm run dev -w @repoready/desktop",
+    "dev:web": "npm run dev -w @repoready/web",
+    "dev:requests": "npm run dev -w @repoready/requests",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "tsx --test packages/contracts/test/*.test.ts packages/catalog-tools/test/*.test.ts services/requests/test/*.test.ts",
+    "build": "npm run build --workspaces --if-present",
+    "schemas:generate": "tsx packages/contracts/scripts/generate.ts",
+    "schemas:check": "tsx packages/contracts/scripts/generate.ts --check",
+    "policy:check": "node scripts/check-policy.mjs",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run schemas:check && npm test && npm run policy:check && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "24.19.2",
+    "eslint": "9.39.5",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
+  }
+}

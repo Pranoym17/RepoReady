@@ -1,0 +1,19 @@
+{
+  "name": "@repoready/requests",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/tool.mjs wrangler dev --local",
+    "build": "node ../../scripts/tool.mjs wrangler deploy --dry-run --outdir dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repoready/contracts": "*",
+    "hono": "4.13.13"
+  },
+  "devDependencies": {
+    "wrangler": "4.150.0",
+    "@cloudflare/workers-types": "5.20261014.1"
+  }
+}
