@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "appId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?$"
+    },
+    "downloadUrl": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https:\\/\\/[a-zA-Z0-9.-]+(?::443)?(?:\\/[^\\s#]*)?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 2147483648
+    },
+    "signerIdentity": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requiredPrivileges": {
+      "type": "string",
+      "enum": [
+        "user",
+        "administrator"
+      ]
+    },
+    "adapter": {
+      "type": "string",
+      "enum": [
+        "managed-folder",
+        "repoready-nsis",
+        "publisher-msi",
+        "publisher-exe"
+      ]
+    },
+    "uninstallAdapter": {
+      "type": "string",
+      "enum": [
+        "managed-folder",
+        "repoready-nsis",
+        "publisher-msi",
+        "publisher-exe"
+      ]
+    },
+    "credentialIntegration": {
+      "type": "string",
+      "enum": [
+        "none",
+        "owned-launcher-v1"
+      ]
+    }
+  },
+  "required": [
+    "appId",
+    "version",
+    "downloadUrl",
+    "sha256",
+    "sizeBytes",
+    "signerIdentity",
+    "requiredPrivileges",
+    "adapter",
+    "uninstallAdapter",
+    "credentialIntegration"
+  ],
+  "additionalProperties": false
+}

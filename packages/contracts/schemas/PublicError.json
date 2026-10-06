@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "enum": [
+        "INVALID_INPUT",
+        "NOT_AVAILABLE",
+        "UNTRUSTED_CATALOG",
+        "STALE_CATALOG",
+        "INCOMPATIBLE",
+        "INSUFFICIENT_DISK",
+        "DOWNLOAD_FAILED",
+        "HASH_MISMATCH",
+        "INSTALL_FAILED",
+        "RECOVERY_REQUIRED",
+        "CREDENTIAL_FAILED",
+        "RATE_LIMITED",
+        "INTERNAL_ERROR"
+      ]
+    },
+    "retryable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "code",
+    "retryable"
+  ],
+  "additionalProperties": false
+}

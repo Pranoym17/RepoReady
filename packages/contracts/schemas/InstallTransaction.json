@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "appId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?$"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "preflight",
+        "downloading",
+        "verifying",
+        "staging",
+        "installing",
+        "checking",
+        "committing",
+        "installed",
+        "canceled",
+        "failed",
+        "recovery-required"
+      ]
+    },
+    "bytesDownloaded": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483648
+    },
+    "errorCode": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "INVALID_INPUT",
+            "NOT_AVAILABLE",
+            "UNTRUSTED_CATALOG",
+            "STALE_CATALOG",
+            "INCOMPATIBLE",
+            "INSUFFICIENT_DISK",
+            "DOWNLOAD_FAILED",
+            "HASH_MISMATCH",
+            "INSTALL_FAILED",
+            "RECOVERY_REQUIRED",
+            "CREDENTIAL_FAILED",
+            "RATE_LIMITED",
+            "INTERNAL_ERROR"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+    },
+    "finishedAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recoveryState": {
+      "type": "string",
+      "enum": [
+        "none",
+        "inspect",
+        "retry",
+        "guided-recovery"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "appId",
+    "version",
+    "stage",
+    "bytesDownloaded",
+    "errorCode",
+    "startedAt",
+    "finishedAt",
+    "recoveryState"
+  ],
+  "additionalProperties": false
+}

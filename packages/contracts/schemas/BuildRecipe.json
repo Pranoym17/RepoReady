@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "appId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "maxLength": 256,
+      "pattern": "^https:\\/\\/github\\.com\\/[A-Za-z0-9-]+\\/[A-Za-z0-9_.-]+$"
+    },
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "adapter": {
+      "type": "string",
+      "enum": [
+        "pyinstaller",
+        "upstream-packager",
+        "reviewed-launcher"
+      ]
+    },
+    "adapterVersion": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?$"
+    },
+    "lockfiles": {
+      "minItems": 1,
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 240,
+            "pattern": "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*(?:\\/[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*)*$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "expectedOutputs": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 240,
+        "pattern": "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*(?:\\/[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*)*$"
+      }
+    },
+    "notices": {
+      "minItems": 1,
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 240,
+        "pattern": "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*(?:\\/[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*)*$"
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "credentialIntegration": {
+          "type": "string",
+          "enum": [
+            "none",
+            "owned-launcher-v1"
+          ]
+        },
+        "providers": {
+          "maxItems": 10,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          }
+        }
+      },
+      "required": [
+        "credentialIntegration",
+        "providers"
+      ],
+      "additionalProperties": false
+    },
+    "manualProtocol": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*(?:\\/[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*)*$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "appId",
+    "sourceUrl",
+    "sourceCommit",
+    "adapter",
+    "adapterVersion",
+    "lockfiles",
+    "expectedOutputs",
+    "notices",
+    "configuration",
+    "manualProtocol"
+  ],
+  "additionalProperties": false
+}

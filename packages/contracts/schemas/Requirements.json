@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "minWindowsBuild": {
+      "type": "integer",
+      "minimum": 22000,
+      "maximum": 999999
+    },
+    "minRamMb": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1048576
+    },
+    "diskMb": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 16777216
+    },
+    "gpuNotes": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "internetRequired": {
+      "type": "boolean"
+    },
+    "externalApiProviders": {
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      }
+    },
+    "apiChargesDisclosed": {
+      "type": "boolean"
+    },
+    "extraDownloadBytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    }
+  },
+  "required": [
+    "minWindowsBuild",
+    "minRamMb",
+    "diskMb",
+    "gpuNotes",
+    "internetRequired",
+    "externalApiProviders",
+    "apiChargesDisclosed",
+    "extraDownloadBytes"
+  ],
+  "additionalProperties": false
+}

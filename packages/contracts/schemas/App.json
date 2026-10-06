@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "slug": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20000
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ai",
+        "productivity",
+        "media",
+        "utilities"
+      ]
+    },
+    "tags": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    "sourceUrl": {
+      "type": "string",
+      "maxLength": 256,
+      "pattern": "^https:\\/\\/github\\.com\\/[A-Za-z0-9-]+\\/[A-Za-z0-9_.-]+$"
+    },
+    "upstreamAuthor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "licenseSpdx": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ready",
+        "publisher-installer",
+        "requested",
+        "unavailable",
+        "paused",
+        "revoked"
+      ]
+    },
+    "screenshots": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2048,
+        "pattern": "^https:\\/\\/[a-zA-Z0-9.-]+(?::443)?(?:\\/[^\\s#]*)?$"
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "minWindowsBuild": {
+          "type": "integer",
+          "minimum": 22000,
+          "maximum": 999999
+        },
+        "minRamMb": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        },
+        "diskMb": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 16777216
+        },
+        "gpuNotes": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "internetRequired": {
+          "type": "boolean"
+        },
+        "externalApiProviders": {
+          "maxItems": 10,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          }
+        },
+        "apiChargesDisclosed": {
+          "type": "boolean"
+        },
+        "extraDownloadBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "minWindowsBuild",
+        "minRamMb",
+        "diskMb",
+        "gpuNotes",
+        "internetRequired",
+        "externalApiProviders",
+        "apiChargesDisclosed",
+        "extraDownloadBytes"
+      ],
+      "additionalProperties": false
+    },
+    "verifiedAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "supportUrl": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https:\\/\\/[a-zA-Z0-9.-]+(?::443)?(?:\\/[^\\s#]*)?$"
+    }
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "summary",
+    "description",
+    "category",
+    "tags",
+    "sourceUrl",
+    "upstreamAuthor",
+    "licenseSpdx",
+    "status",
+    "screenshots",
+    "requirements",
+    "verifiedAt",
+    "supportUrl"
+  ],
+  "additionalProperties": false
+}

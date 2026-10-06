@@ -1,0 +1,831 @@
+[
+  {
+    "name": "accept Requirements fixture",
+    "schema": "Requirements",
+    "valid": true,
+    "value": {
+      "minWindowsBuild": 22000,
+      "minRamMb": 8192,
+      "diskMb": 500,
+      "gpuNotes": "No GPU required",
+      "internetRequired": false,
+      "externalApiProviders": [],
+      "apiChargesDisclosed": false,
+      "extraDownloadBytes": 0
+    }
+  },
+  {
+    "name": "reject unknown fields in Requirements",
+    "schema": "Requirements",
+    "valid": false,
+    "value": {
+      "minWindowsBuild": 22000,
+      "minRamMb": 8192,
+      "diskMb": 500,
+      "gpuNotes": "No GPU required",
+      "internetRequired": false,
+      "externalApiProviders": [],
+      "apiChargesDisclosed": false,
+      "extraDownloadBytes": 0,
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept App fixture",
+    "schema": "App",
+    "valid": true,
+    "value": {
+      "id": "test-fixture",
+      "slug": "test-fixture",
+      "name": "TEST ONLY",
+      "summary": "Not a real package",
+      "description": "Schema fixture only. Does not authorize installation.",
+      "category": "utilities",
+      "tags": [],
+      "sourceUrl": "https://github.com/example/fixture",
+      "upstreamAuthor": "Example",
+      "licenseSpdx": "MIT",
+      "status": "ready",
+      "screenshots": [],
+      "requirements": {
+        "minWindowsBuild": 22000,
+        "minRamMb": 8192,
+        "diskMb": 500,
+        "gpuNotes": "No GPU required",
+        "internetRequired": false,
+        "externalApiProviders": [],
+        "apiChargesDisclosed": false,
+        "extraDownloadBytes": 0
+      },
+      "verifiedAt": "2026-10-04T12:00:00Z",
+      "supportUrl": "https://example.org/support"
+    }
+  },
+  {
+    "name": "reject unknown fields in App",
+    "schema": "App",
+    "valid": false,
+    "value": {
+      "id": "test-fixture",
+      "slug": "test-fixture",
+      "name": "TEST ONLY",
+      "summary": "Not a real package",
+      "description": "Schema fixture only. Does not authorize installation.",
+      "category": "utilities",
+      "tags": [],
+      "sourceUrl": "https://github.com/example/fixture",
+      "upstreamAuthor": "Example",
+      "licenseSpdx": "MIT",
+      "status": "ready",
+      "screenshots": [],
+      "requirements": {
+        "minWindowsBuild": 22000,
+        "minRamMb": 8192,
+        "diskMb": 500,
+        "gpuNotes": "No GPU required",
+        "internetRequired": false,
+        "externalApiProviders": [],
+        "apiChargesDisclosed": false,
+        "extraDownloadBytes": 0
+      },
+      "verifiedAt": "2026-10-04T12:00:00Z",
+      "supportUrl": "https://example.org/support",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept AppVersion fixture",
+    "schema": "AppVersion",
+    "valid": true,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "packagingType": "managed-folder",
+      "os": "windows",
+      "architecture": "x64",
+      "releaseNotes": "Fixture only",
+      "approvedAt": "2026-10-04T12:00:00Z",
+      "status": "ready"
+    }
+  },
+  {
+    "name": "reject unknown fields in AppVersion",
+    "schema": "AppVersion",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "packagingType": "managed-folder",
+      "os": "windows",
+      "architecture": "x64",
+      "releaseNotes": "Fixture only",
+      "approvedAt": "2026-10-04T12:00:00Z",
+      "status": "ready",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept Artifact fixture",
+    "schema": "Artifact",
+    "valid": true,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "downloadUrl": "https://example.org/fixture.zip",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sizeBytes": 100,
+      "signerIdentity": null,
+      "requiredPrivileges": "user",
+      "adapter": "managed-folder",
+      "uninstallAdapter": "managed-folder",
+      "credentialIntegration": "none"
+    }
+  },
+  {
+    "name": "reject unknown fields in Artifact",
+    "schema": "Artifact",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "downloadUrl": "https://example.org/fixture.zip",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sizeBytes": 100,
+      "signerIdentity": null,
+      "requiredPrivileges": "user",
+      "adapter": "managed-folder",
+      "uninstallAdapter": "managed-folder",
+      "credentialIntegration": "none",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept Verification fixture",
+    "schema": "Verification",
+    "valid": true,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "testDate": "2026-10-04T12:00:00Z",
+      "tester": "Fixture only",
+      "testMatrixId": "test-only",
+      "checklistVersion": "beta-1",
+      "licenseReview": "passed",
+      "securityReview": "passed",
+      "coreTaskResult": "passed",
+      "lifecycleResult": "passed",
+      "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "name": "reject unknown fields in Verification",
+    "schema": "Verification",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "testDate": "2026-10-04T12:00:00Z",
+      "tester": "Fixture only",
+      "testMatrixId": "test-only",
+      "checklistVersion": "beta-1",
+      "licenseReview": "passed",
+      "securityReview": "passed",
+      "coreTaskResult": "passed",
+      "lifecycleResult": "passed",
+      "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept InstallManifest fixture",
+    "schema": "InstallManifest",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "app": {
+        "id": "test-fixture",
+        "slug": "test-fixture",
+        "name": "TEST ONLY",
+        "summary": "Not a real package",
+        "description": "Schema fixture only. Does not authorize installation.",
+        "category": "utilities",
+        "tags": [],
+        "sourceUrl": "https://github.com/example/fixture",
+        "upstreamAuthor": "Example",
+        "licenseSpdx": "MIT",
+        "status": "ready",
+        "screenshots": [],
+        "requirements": {
+          "minWindowsBuild": 22000,
+          "minRamMb": 8192,
+          "diskMb": 500,
+          "gpuNotes": "No GPU required",
+          "internetRequired": false,
+          "externalApiProviders": [],
+          "apiChargesDisclosed": false,
+          "extraDownloadBytes": 0
+        },
+        "verifiedAt": "2026-10-04T12:00:00Z",
+        "supportUrl": "https://example.org/support"
+      },
+      "release": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "packagingType": "managed-folder",
+        "os": "windows",
+        "architecture": "x64",
+        "releaseNotes": "Fixture only",
+        "approvedAt": "2026-10-04T12:00:00Z",
+        "status": "ready"
+      },
+      "artifact": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "downloadUrl": "https://example.org/fixture.zip",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 100,
+        "signerIdentity": null,
+        "requiredPrivileges": "user",
+        "adapter": "managed-folder",
+        "uninstallAdapter": "managed-folder",
+        "credentialIntegration": "none"
+      },
+      "verification": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "testDate": "2026-10-04T12:00:00Z",
+        "tester": "Fixture only",
+        "testMatrixId": "test-only",
+        "checklistVersion": "beta-1",
+        "licenseReview": "passed",
+        "securityReview": "passed",
+        "coreTaskResult": "passed",
+        "lifecycleResult": "passed",
+        "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  },
+  {
+    "name": "reject unknown fields in InstallManifest",
+    "schema": "InstallManifest",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "app": {
+        "id": "test-fixture",
+        "slug": "test-fixture",
+        "name": "TEST ONLY",
+        "summary": "Not a real package",
+        "description": "Schema fixture only. Does not authorize installation.",
+        "category": "utilities",
+        "tags": [],
+        "sourceUrl": "https://github.com/example/fixture",
+        "upstreamAuthor": "Example",
+        "licenseSpdx": "MIT",
+        "status": "ready",
+        "screenshots": [],
+        "requirements": {
+          "minWindowsBuild": 22000,
+          "minRamMb": 8192,
+          "diskMb": 500,
+          "gpuNotes": "No GPU required",
+          "internetRequired": false,
+          "externalApiProviders": [],
+          "apiChargesDisclosed": false,
+          "extraDownloadBytes": 0
+        },
+        "verifiedAt": "2026-10-04T12:00:00Z",
+        "supportUrl": "https://example.org/support"
+      },
+      "release": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "packagingType": "managed-folder",
+        "os": "windows",
+        "architecture": "x64",
+        "releaseNotes": "Fixture only",
+        "approvedAt": "2026-10-04T12:00:00Z",
+        "status": "ready"
+      },
+      "artifact": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "downloadUrl": "https://example.org/fixture.zip",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 100,
+        "signerIdentity": null,
+        "requiredPrivileges": "user",
+        "adapter": "managed-folder",
+        "uninstallAdapter": "managed-folder",
+        "credentialIntegration": "none"
+      },
+      "verification": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "testDate": "2026-10-04T12:00:00Z",
+        "tester": "Fixture only",
+        "testMatrixId": "test-only",
+        "checklistVersion": "beta-1",
+        "licenseReview": "passed",
+        "securityReview": "passed",
+        "coreTaskResult": "passed",
+        "lifecycleResult": "passed",
+        "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept BuildRecipe fixture",
+    "schema": "BuildRecipe",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "appId": "test-fixture",
+      "sourceUrl": "https://github.com/example/fixture",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "adapter": "pyinstaller",
+      "adapterVersion": "1.0.0",
+      "lockfiles": [
+        {
+          "path": "requirements.txt",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedOutputs": ["dist/app.exe"],
+      "notices": ["LICENSE"],
+      "configuration": {
+        "credentialIntegration": "none",
+        "providers": []
+      },
+      "manualProtocol": "tests/core-task.md"
+    }
+  },
+  {
+    "name": "reject unknown fields in BuildRecipe",
+    "schema": "BuildRecipe",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "appId": "test-fixture",
+      "sourceUrl": "https://github.com/example/fixture",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "adapter": "pyinstaller",
+      "adapterVersion": "1.0.0",
+      "lockfiles": [
+        {
+          "path": "requirements.txt",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedOutputs": ["dist/app.exe"],
+      "notices": ["LICENSE"],
+      "configuration": {
+        "credentialIntegration": "none",
+        "providers": []
+      },
+      "manualProtocol": "tests/core-task.md",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept CatalogIndex fixture",
+    "schema": "CatalogIndex",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "channel": "stable",
+      "sequence": 1,
+      "issuedAt": "2026-10-04T12:00:00Z",
+      "expiresAt": "2026-10-11T12:00:00Z",
+      "details": [
+        {
+          "appId": "test-fixture",
+          "version": "1.0.0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "holds": []
+    }
+  },
+  {
+    "name": "reject unknown fields in CatalogIndex",
+    "schema": "CatalogIndex",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "channel": "stable",
+      "sequence": 1,
+      "issuedAt": "2026-10-04T12:00:00Z",
+      "expiresAt": "2026-10-11T12:00:00Z",
+      "details": [
+        {
+          "appId": "test-fixture",
+          "version": "1.0.0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "holds": [],
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept Submission fixture",
+    "schema": "Submission",
+    "valid": true,
+    "value": {
+      "publicId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sourceUrl": "https://github.com/example/fixture",
+      "count": 1,
+      "status": "NEW",
+      "createdAt": "2026-10-04T12:00:00Z",
+      "lastRequestedAt": "2026-10-04T12:00:00Z"
+    }
+  },
+  {
+    "name": "reject unknown fields in Submission",
+    "schema": "Submission",
+    "valid": false,
+    "value": {
+      "publicId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sourceUrl": "https://github.com/example/fixture",
+      "count": 1,
+      "status": "NEW",
+      "createdAt": "2026-10-04T12:00:00Z",
+      "lastRequestedAt": "2026-10-04T12:00:00Z",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept RequestInput fixture",
+    "schema": "RequestInput",
+    "valid": true,
+    "value": {
+      "sourceUrl": "https://github.com/example/fixture",
+      "turnstileToken": "test-only",
+      "idempotencyKey": "61b3dd4b-eef6-4b12-a236-1637f7dc3549"
+    }
+  },
+  {
+    "name": "reject unknown fields in RequestInput",
+    "schema": "RequestInput",
+    "valid": false,
+    "value": {
+      "sourceUrl": "https://github.com/example/fixture",
+      "turnstileToken": "test-only",
+      "idempotencyKey": "61b3dd4b-eef6-4b12-a236-1637f7dc3549",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept Preview fixture",
+    "schema": "Preview",
+    "valid": true,
+    "value": {
+      "sourceUrl": "https://github.com/example/fixture",
+      "description": null,
+      "languages": [],
+      "licenseIndicator": null,
+      "hasReleases": false,
+      "archived": false,
+      "updatedAt": "2026-10-04T12:00:00Z",
+      "installability": "not-verified"
+    }
+  },
+  {
+    "name": "reject unknown fields in Preview",
+    "schema": "Preview",
+    "valid": false,
+    "value": {
+      "sourceUrl": "https://github.com/example/fixture",
+      "description": null,
+      "languages": [],
+      "licenseIndicator": null,
+      "hasReleases": false,
+      "archived": false,
+      "updatedAt": "2026-10-04T12:00:00Z",
+      "installability": "not-verified",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept InstallTransaction fixture",
+    "schema": "InstallTransaction",
+    "valid": true,
+    "value": {
+      "id": "61b3dd4b-eef6-4b12-a236-1637f7dc3549",
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "stage": "preflight",
+      "bytesDownloaded": 0,
+      "errorCode": null,
+      "startedAt": "2026-10-04T12:00:00Z",
+      "finishedAt": null,
+      "recoveryState": "none"
+    }
+  },
+  {
+    "name": "reject unknown fields in InstallTransaction",
+    "schema": "InstallTransaction",
+    "valid": false,
+    "value": {
+      "id": "61b3dd4b-eef6-4b12-a236-1637f7dc3549",
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "stage": "preflight",
+      "bytesDownloaded": 0,
+      "errorCode": null,
+      "startedAt": "2026-10-04T12:00:00Z",
+      "finishedAt": null,
+      "recoveryState": "none",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept InstalledApp fixture",
+    "schema": "InstalledApp",
+    "valid": true,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "installPath": "C:\\\\test-only",
+      "installMethod": "managed-folder",
+      "installedAt": "2026-10-04T12:00:00Z",
+      "lastLaunchAt": null,
+      "updateStatus": "unknown",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "name": "reject unknown fields in InstalledApp",
+    "schema": "InstalledApp",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "installPath": "C:\\\\test-only",
+      "installMethod": "managed-folder",
+      "installedAt": "2026-10-04T12:00:00Z",
+      "lastLaunchAt": null,
+      "updateStatus": "unknown",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept PublicError fixture",
+    "schema": "PublicError",
+    "valid": true,
+    "value": {
+      "code": "INVALID_INPUT",
+      "retryable": false
+    }
+  },
+  {
+    "name": "reject unknown fields in PublicError",
+    "schema": "PublicError",
+    "valid": false,
+    "value": {
+      "code": "INVALID_INPUT",
+      "retryable": false,
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "accept SignedEnvelope fixture",
+    "schema": "SignedEnvelope",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "keyId": "test-only",
+      "payload": "e30=",
+      "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  {
+    "name": "reject unknown fields in SignedEnvelope",
+    "schema": "SignedEnvelope",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "keyId": "test-only",
+      "payload": "e30=",
+      "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "unexpected": "not allowed"
+    }
+  },
+  {
+    "name": "reject arbitrary consumer adapter",
+    "schema": "Artifact",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "downloadUrl": "https://example.org/fixture.zip",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sizeBytes": 100,
+      "signerIdentity": null,
+      "requiredPrivileges": "user",
+      "adapter": "powershell",
+      "uninstallAdapter": "managed-folder",
+      "credentialIntegration": "none"
+    }
+  },
+  {
+    "name": "reject unknown schema version",
+    "schema": "InstallManifest",
+    "valid": false,
+    "value": {
+      "schemaVersion": 2,
+      "app": {
+        "id": "test-fixture",
+        "slug": "test-fixture",
+        "name": "TEST ONLY",
+        "summary": "Not a real package",
+        "description": "Schema fixture only. Does not authorize installation.",
+        "category": "utilities",
+        "tags": [],
+        "sourceUrl": "https://github.com/example/fixture",
+        "upstreamAuthor": "Example",
+        "licenseSpdx": "MIT",
+        "status": "ready",
+        "screenshots": [],
+        "requirements": {
+          "minWindowsBuild": 22000,
+          "minRamMb": 8192,
+          "diskMb": 500,
+          "gpuNotes": "No GPU required",
+          "internetRequired": false,
+          "externalApiProviders": [],
+          "apiChargesDisclosed": false,
+          "extraDownloadBytes": 0
+        },
+        "verifiedAt": "2026-10-04T12:00:00Z",
+        "supportUrl": "https://example.org/support"
+      },
+      "release": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "packagingType": "managed-folder",
+        "os": "windows",
+        "architecture": "x64",
+        "releaseNotes": "Fixture only",
+        "approvedAt": "2026-10-04T12:00:00Z",
+        "status": "ready"
+      },
+      "artifact": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "downloadUrl": "https://example.org/fixture.zip",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 100,
+        "signerIdentity": null,
+        "requiredPrivileges": "user",
+        "adapter": "managed-folder",
+        "uninstallAdapter": "managed-folder",
+        "credentialIntegration": "none"
+      },
+      "verification": {
+        "appId": "test-fixture",
+        "version": "1.0.0",
+        "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "testDate": "2026-10-04T12:00:00Z",
+        "tester": "Fixture only",
+        "testMatrixId": "test-only",
+        "checklistVersion": "beta-1",
+        "licenseReview": "passed",
+        "securityReview": "passed",
+        "coreTaskResult": "passed",
+        "lifecycleResult": "passed",
+        "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  },
+  {
+    "name": "reject bad hash",
+    "schema": "Artifact",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "downloadUrl": "https://example.org/fixture.zip",
+      "sha256": "invalid",
+      "sizeBytes": 100,
+      "signerIdentity": null,
+      "requiredPrivileges": "user",
+      "adapter": "managed-folder",
+      "uninstallAdapter": "managed-folder",
+      "credentialIntegration": "none"
+    }
+  },
+  {
+    "name": "reject source recipe scripts",
+    "schema": "BuildRecipe",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "appId": "test-fixture",
+      "sourceUrl": "https://github.com/example/fixture",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "adapter": "pyinstaller",
+      "adapterVersion": "1.0.0",
+      "lockfiles": [
+        {
+          "path": "requirements.txt",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedOutputs": ["dist/app.exe"],
+      "notices": ["LICENSE"],
+      "configuration": {
+        "credentialIntegration": "none",
+        "providers": []
+      },
+      "manualProtocol": "tests/core-task.md",
+      "shell": "curl example | sh"
+    }
+  },
+  {
+    "name": "reject path traversal",
+    "schema": "BuildRecipe",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "appId": "test-fixture",
+      "sourceUrl": "https://github.com/example/fixture",
+      "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "adapter": "pyinstaller",
+      "adapterVersion": "1.0.0",
+      "lockfiles": [
+        {
+          "path": "requirements.txt",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expectedOutputs": ["../escape.exe"],
+      "notices": ["LICENSE"],
+      "configuration": {
+        "credentialIntegration": "none",
+        "providers": []
+      },
+      "manualProtocol": "tests/core-task.md"
+    }
+  },
+  {
+    "name": "reject non-HTTPS artifacts",
+    "schema": "Artifact",
+    "valid": false,
+    "value": {
+      "appId": "test-fixture",
+      "version": "1.0.0",
+      "downloadUrl": "http://example.org/fixture",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sizeBytes": 100,
+      "signerIdentity": null,
+      "requiredPrivileges": "user",
+      "adapter": "managed-folder",
+      "uninstallAdapter": "managed-folder",
+      "credentialIntegration": "none"
+    }
+  },
+  {
+    "name": "reject invalid timestamp",
+    "schema": "App",
+    "valid": false,
+    "value": {
+      "id": "test-fixture",
+      "slug": "test-fixture",
+      "name": "TEST ONLY",
+      "summary": "Not a real package",
+      "description": "Schema fixture only. Does not authorize installation.",
+      "category": "utilities",
+      "tags": [],
+      "sourceUrl": "https://github.com/example/fixture",
+      "upstreamAuthor": "Example",
+      "licenseSpdx": "MIT",
+      "status": "ready",
+      "screenshots": [],
+      "requirements": {
+        "minWindowsBuild": 22000,
+        "minRamMb": 8192,
+        "diskMb": 500,
+        "gpuNotes": "No GPU required",
+        "internetRequired": false,
+        "externalApiProviders": [],
+        "apiChargesDisclosed": false,
+        "extraDownloadBytes": 0
+      },
+      "verifiedAt": "yesterday",
+      "supportUrl": "https://example.org/support"
+    }
+  }
+]
