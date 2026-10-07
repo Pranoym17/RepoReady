@@ -1,0 +1,6 @@
+{
+  "identifier": "main",
+  "description": "Bundled main window can read development status only.",
+  "windows": ["main"],
+  "permissions": ["allow-foundation-status"]
+}

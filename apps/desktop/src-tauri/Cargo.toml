@@ -1,0 +1,18 @@
+[package]
+name = "repoready-desktop"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[features]
+default = []
+desktop = ["dep:tauri", "dep:tauri-build"]
+
+[dependencies]
+repoready-core = { path = "../../../packages/native-core" }
+serde_json.workspace = true
+tauri = { version = "=2.12.3", optional = true }
+
+[build-dependencies]
+tauri-build = { version = "=2.7.2", optional = true }

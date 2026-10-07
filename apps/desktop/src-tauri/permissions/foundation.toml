@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "allow-foundation-status"
+description = "Read the non-sensitive foundation status."
+commands.allow = ["foundation_status"]
