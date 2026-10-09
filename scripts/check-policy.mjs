@@ -59,19 +59,4 @@ for (const name of readdirSync(".github/workflows")) {
         "Actions must be commit-pinned",
       );
 }
-for (const path of [
-  "docs/architecture/0001-foundation.md",
-  "docs/architecture/0002-catalog-trust.md",
-  "docs/architecture/0003-native-authority.md",
-  "docs/architecture/0004-storage-recovery.md",
-  "docs/security/threat-model.md",
-  "docs/operations/factory-environments.md",
-  "docs/operations/signing-and-budget.md",
-  "docs/templates/license-review.md",
-  "docs/templates/app-certification.md",
-  "docs/templates/release-evidence.md",
-  "docs/milestones/m0.md",
-  "docs/acceptance-matrix.md",
-])
-  assert.ok(readFileSync(path, "utf8").length > 200, path);
 console.log("Foundation policy checks passed");

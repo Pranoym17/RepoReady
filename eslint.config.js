@@ -9,6 +9,7 @@ export default tseslint.config(
       "**/.astro/**",
       "**/.wrangler/**",
       ".cache/**",
+      ".worktrees/**",
       "**/schemas/**",
     ],
   },

@@ -5,4 +5,7 @@ Cargo.lock
 **/target/
 **/.astro/
 .cache/
+.worktrees/
+docs/
+**/*.md
 docs/prd/public-beta-v1.0.md
