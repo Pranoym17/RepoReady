@@ -1,0 +1,12 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated dependencies, build output and workspace-local verification tools"
+paths = ['''(^|[\\/])(\.cache|node_modules|target|dist|\.git)([\\/]|$)''']
+
+[[allowlists]]
+description = "Public deterministic request-id UUID in shared schema fixtures, not an API key"
+condition = "AND"
+paths = ['''^packages/contracts/fixtures/cases\.json$''']
+regexes = ['''61b3dd4b-eef6-4b12-a236-1637f7dc3549''']
