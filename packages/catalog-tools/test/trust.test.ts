@@ -130,3 +130,36 @@ test("signed holds override previously ready detail", () => {
     ),
   );
 });
+
+test("shared Node/Rust byte-level trust vector verifies", () => {
+  const vector = JSON.parse(
+    readFileSync(
+      new URL("../../contracts/fixtures/catalog-vector.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const key = createPublicKey({
+    key: Buffer.concat([
+      Buffer.from("302a300506032b6570032100", "hex"),
+      Buffer.from(vector.publicKeyHex, "hex"),
+    ]),
+    format: "der",
+    type: "spki",
+  });
+  const trusted = verifyCatalog(
+    Buffer.from(JSON.stringify(vector.envelope)),
+    new Map([["test-only", key]]),
+    vector.nowUnixSeconds * 1000,
+    initial,
+  );
+  assert.equal(trusted.index.sequence, 2);
+  assert.equal(
+    verifyDetail(
+      trusted.index,
+      "test-fixture",
+      "1.0.0",
+      Buffer.from(vector.detailBase64, "base64"),
+    ).app.id,
+    "test-fixture",
+  );
+});

@@ -24,9 +24,8 @@ export function verifyCatalog(
   state: TrustState,
 ): { index: Index; digest: string } {
   if (bytes.length > MAX_ENVELOPE_BYTES) throw new Error("Catalog too large");
-  const envelope = SignedEnvelope.parse(
-    JSON.parse(Buffer.from(bytes).toString("utf8")),
-  );
+  const decode = new TextDecoder("utf-8", { fatal: true });
+  const envelope = SignedEnvelope.parse(JSON.parse(decode.decode(bytes)));
   const key = pinnedKeys.get(envelope.keyId);
   if (!key || key.asymmetricKeyType !== "ed25519")
     throw new Error("Unknown key");
@@ -45,7 +44,7 @@ export function verifyCatalog(
     )
   )
     throw new Error("Untrusted catalog");
-  const index = CatalogIndex.parse(JSON.parse(payload.toString("utf8")));
+  const index = CatalogIndex.parse(JSON.parse(decode.decode(payload)));
   const digest = sha256(payload);
   if (
     index.sequence < state.highestSequence ||

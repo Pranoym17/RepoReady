@@ -18,7 +18,8 @@ export const Version = z
   .string()
   .regex(/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/)
   .max(80);
-export const Timestamp = z.iso.datetime();
+// UTC second precision keeps native and JS freshness decisions identical.
+export const Timestamp = z.iso.datetime({ precision: 0 });
 export const Category = z.enum(["ai", "productivity", "media", "utilities"]);
 export const Status = z.enum([
   "ready",
@@ -269,6 +270,7 @@ export const schemas = {
   PublicError,
 };
 export type Manifest = z.infer<typeof InstallManifest>;
+export type PublicErrorValue = z.infer<typeof PublicError>;
 export { normalizeGithubUrl } from "./github.js";
 export { canTransition, reconcileStage, isTerminal } from "./operations.js";
 

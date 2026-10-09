@@ -827,5 +827,67 @@
       "verifiedAt": "yesterday",
       "supportUrl": "https://example.org/support"
     }
+  },
+  {
+    "name": "reject fractional freshness timestamps",
+    "schema": "App",
+    "valid": false,
+    "value": {
+      "id": "test-fixture",
+      "slug": "test-fixture",
+      "name": "TEST ONLY",
+      "summary": "Not a real package",
+      "description": "Schema fixture only. Does not authorize installation.",
+      "category": "utilities",
+      "tags": [],
+      "sourceUrl": "https://github.com/example/fixture",
+      "upstreamAuthor": "Example",
+      "licenseSpdx": "MIT",
+      "status": "ready",
+      "screenshots": [],
+      "requirements": {
+        "minWindowsBuild": 22000,
+        "minRamMb": 8192,
+        "diskMb": 500,
+        "gpuNotes": "No GPU required",
+        "internetRequired": false,
+        "externalApiProviders": [],
+        "apiChargesDisclosed": false,
+        "extraDownloadBytes": 0
+      },
+      "verifiedAt": "2026-10-04T12:00:00.500Z",
+      "supportUrl": "https://example.org/support"
+    }
+  },
+  {
+    "name": "reject offset freshness timestamps",
+    "schema": "App",
+    "valid": false,
+    "value": {
+      "id": "test-fixture",
+      "slug": "test-fixture",
+      "name": "TEST ONLY",
+      "summary": "Not a real package",
+      "description": "Schema fixture only. Does not authorize installation.",
+      "category": "utilities",
+      "tags": [],
+      "sourceUrl": "https://github.com/example/fixture",
+      "upstreamAuthor": "Example",
+      "licenseSpdx": "MIT",
+      "status": "ready",
+      "screenshots": [],
+      "requirements": {
+        "minWindowsBuild": 22000,
+        "minRamMb": 8192,
+        "diskMb": 500,
+        "gpuNotes": "No GPU required",
+        "internetRequired": false,
+        "externalApiProviders": [],
+        "apiChargesDisclosed": false,
+        "extraDownloadBytes": 0
+      },
+      "verifiedAt": "2026-10-04T08:00:00-04:00",
+      "supportUrl": "https://example.org/support"
+    }
   }
 ]

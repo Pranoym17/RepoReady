@@ -146,6 +146,31 @@ mod tests {
     use super::*;
     use ed25519_dalek::{Signer, SigningKey};
     use serde_json::json;
+
+    #[test]
+    fn shared_node_rust_byte_vector_verifies() {
+        let vector: Value =
+            serde_json::from_str(include_str!("../../contracts/fixtures/catalog-vector.json"))
+                .unwrap();
+        let public: [u8; 32] = hex::decode(vector["publicKeyHex"].as_str().unwrap())
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let keys = BTreeMap::from([("test-only".into(), public)]);
+        let now = vector["nowUnixSeconds"].as_i64().unwrap();
+        let trusted = verify_index(
+            &serde_json::to_vec(&vector["envelope"]).unwrap(),
+            &keys,
+            now,
+            &TrustState::default(),
+        )
+        .unwrap();
+        assert_eq!(trusted.sequence(), 2);
+        let bytes = STANDARD
+            .decode(vector["detailBase64"].as_str().unwrap())
+            .unwrap();
+        assert!(verify_detail(&trusted, "test-fixture", "1.0.0", &bytes, now).is_ok());
+    }
     fn envelope(index: &Value, signing: &SigningKey) -> Vec<u8> {
         let payload = serde_json::to_vec(index).unwrap();
         let mut message = DOMAIN.to_vec();
