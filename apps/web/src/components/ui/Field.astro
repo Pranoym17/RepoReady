@@ -1,0 +1,5 @@
+---
+interface Props { id: string; label: string; help?: string; error?: string; }
+const { id, label, help, error } = Astro.props;
+---
+<div class="field"><label class="field-label" for={id}>{label}</label><slot />{help && <p id={`${id}-help`} class="muted">{help}</p>}{error && <p id={`${id}-error`} role="alert">{error}</p>}</div>

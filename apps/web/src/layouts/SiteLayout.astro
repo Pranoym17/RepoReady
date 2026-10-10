@@ -1,0 +1,66 @@
+---
+import "../styles/global.css";
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+}
+const { title, description, canonicalPath } = Astro.props;
+const canonical = Astro.site && canonicalPath ? new URL(canonicalPath, Astro.site) : undefined;
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const navigation = [
+  { href: "/catalog/", label: "Catalog" },
+  { href: "/request/", label: "Request an app" },
+  { href: "/trust-safety/", label: "Trust & safety" },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f8fafc" />
+    <title>{title} | RepoReady</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={`${title} | RepoReady`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="wordmark" href="/" aria-label="RepoReady home"><span class="brand-mark" aria-hidden="true">R</span>RepoReady</a>
+        <nav aria-label="Main navigation">
+          <ul>{navigation.map(({ href, label }) => <li><a href={href} aria-current={currentPath === href.replace(/\/$/, "") ? "page" : undefined}>{label}</a></li>)}</ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content" class="container" tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div><a class="wordmark" href="/">RepoReady</a><p class="muted">Open-source apps. Clear requirements. Your choice of how to use them.</p><p class="muted">In development · No certified app releases yet.</p></div>
+        <nav aria-label="Footer navigation"><ul>
+          <li><a href="/support/">Support</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="/licenses/">Licenses & credits</a></li><li><a href="/release-notes/">Release notes</a></li><li><a href="https://github.com/Pranoym17/RepoReady">Source on GitHub</a></li>
+        </ul></nav>
+      </div>
+    </footer>
+  </body>
+</html>
+<style>
+  .skip-link { position: absolute; z-index: 10; inset: .5rem auto auto 1rem; padding: .75rem 1rem; background: white; transform: translateY(-180%); }
+  .skip-link:focus { transform: translateY(0); }
+  .site-header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); }
+  .header-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1rem; }
+  .wordmark { display: inline-flex; align-items: center; gap: .6rem; color: var(--color-ink); font-size: 1.15rem; font-weight: 750; text-decoration: none; min-height: 44px; }
+  .brand-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .5rem; background: var(--color-accent); color: white; font-size: 1rem; }
+  nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: .25rem 1rem; padding: 0; margin: 0; }
+  nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: .95rem; }
+  [aria-current="page"] { color: var(--color-ink); font-weight: 700; text-decoration-thickness: .15em; }
+  .site-footer { border-top: 1px solid var(--color-border); background: var(--color-surface); }
+  .footer-inner { padding-block: 2.5rem; display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+  .footer-inner p { max-width: 42ch; margin: .5rem 0 0; font-size: .9rem; }
+  .footer-inner nav ul { max-width: 27rem; }
+  @media (max-width: 480px) { .header-inner { gap: .4rem; } nav ul { gap: .25rem .85rem; } }
+</style>
