@@ -1,0 +1,23 @@
+---
+import type { Candidate } from '../../../../../packages/catalog-tools/src/editorial';
+import { getAppPresentation } from '../../data/catalog';
+interface Props { app: Candidate }
+const { app } = Astro.props;
+const presentation = getAppPresentation(app);
+---
+<article class="card" data-catalog-card data-catalog-item data-slug={app.slug}>
+  <p class="eyebrow">{app.category}</p>
+  <h2><a href={`/apps/${app.slug}/`}>{app.name}</a></h2>
+  <p class="status-badge">{presentation.statusLabel}</p>
+  <p>{app.summary}</p>
+  <p class="muted">{presentation.distributionLabel}</p>
+  <ul class="tags" aria-label={`${app.name} tags`}>
+    {app.tags.map((tag) => <li class="tag">{tag}</li>)}
+  </ul>
+  <p class="muted">{presentation.version ? `Release ${presentation.version}. ${presentation.action.notice}` : 'Research preview. No certified download is available.'}</p>
+</article>
+<style>
+  .card[hidden] { display: none; }
+  .tags { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; }
+  h2 { margin-top: .5rem; }
+</style>
