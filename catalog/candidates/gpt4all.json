@@ -1,0 +1,56 @@
+{
+  "id": "gpt4all",
+  "slug": "gpt4all",
+  "name": "GPT4All",
+  "summary": "Explore local language models in a desktop interface.",
+  "description": "GPT4All provides a desktop interface for local language-model conversations and document-based workflows. Model licenses and component notices require separate review.",
+  "category": "ai",
+  "tags": ["local-ai", "documents", "chat"],
+  "useCases": ["Local document questions", "Desktop AI conversations"],
+  "sourceUrl": "https://github.com/nomic-ai/gpt4all",
+  "upstreamAuthor": "Nomic and GPT4All contributors",
+  "license": {
+    "spdx": "MIT",
+    "notes": "Upstream license indicator only; redistribution, dependency notices and any model/asset licenses await legal review.",
+    "evidenceUrl": "https://github.com/nomic-ai/gpt4all/blob/main/gpt4all-chat/LICENSE"
+  },
+  "review": {
+    "stage": "awaiting-license-review",
+    "reviewedAt": "2026-10-14T16:00:00Z",
+    "notes": "Researched upstream documentation only. Not installed, executed, packaged, security reviewed or certified by RepoReady."
+  },
+  "requirements": {
+    "platform": "Upstream targets Windows; the exact Windows version, architecture and compatibility matrix have not been selected or tested.",
+    "hardware": "Separate model downloads are required; memory and disk demand vary by model.",
+    "disk": "Unknown for a RepoReady distribution. Measure installer, installed files, working data and optional downloads before approval.",
+    "modelDownloads": "Separate model files and their licenses require review; no model or download size has been approved.",
+    "network": "Downloads need network access; integrations may connect to external services.",
+    "privacy": "Local processing is an upstream feature, not a RepoReady privacy audit. Optional integrations need separate review.",
+    "apiCharges": "Local models avoid per-call provider fees; any remote provider or service may charge."
+  },
+  "distribution": {
+    "capability": "unknown",
+    "notes": "Upstream distribution is research context. Independent use without RepoReady or a managed-runtime requirement must be certified for a specific version and artifact before any download is enabled."
+  },
+  "limitations": [
+    "Candidate draft only: no RepoReady release version, test date or approved artifact exists.",
+    "Model output can be inaccurate; evaluate suitability and licensing before relying on it.",
+    "Installation, updating, uninstalling and recovery have not been validated on Windows."
+  ],
+  "screenshots": [],
+  "mediaNotes": "No reviewed screenshot is published. Capture or license authentic media with accessible text and provenance before release publication.",
+  "research": [
+    {
+      "url": "https://github.com/nomic-ai/gpt4all",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    },
+    {
+      "url": "https://github.com/nomic-ai/gpt4all/blob/main/gpt4all-chat/LICENSE",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    }
+  ],
+  "proposedPackageType": null,
+  "setupNotes": "Unknown until a package is selected and a clean-machine setup is reviewed. No installation instructions are authorized for this draft.",
+  "updateNotes": "Unknown until the selected package's update and rollback behavior is tested.",
+  "uninstallNotes": "Unknown until uninstall behavior and retained user data are tested."
+}
