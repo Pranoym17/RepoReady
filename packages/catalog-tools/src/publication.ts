@@ -227,6 +227,27 @@ export function authenticatePublications(options: {
         )
       )
         throw new Error("requirements: unresolved release disclosure");
+      const unresolved =
+        /\bunknown\b|not (measured|tested|selected|reviewed|verified)|await.*review|\b(TBD|TBC|pending)\b|to be determined/i;
+      for (const [field, value] of Object.entries({
+        setupNotes: presentation.editorial.setupNotes,
+        updateNotes: presentation.editorial.updateNotes,
+        uninstallNotes: presentation.editorial.uninstallNotes,
+        "license.notes": presentation.editorial.license.notes,
+        "distribution.notes": presentation.distribution.notes,
+      })) {
+        if (unresolved.test(value))
+          throw new Error(`${field}: unresolved release disclosure`);
+      }
+      if (
+        presentation.editorial.distribution.capability !==
+          presentation.distribution.capability ||
+        presentation.editorial.distribution.notes !==
+          presentation.distribution.notes
+      )
+        throw new Error(
+          "distribution.capability: conflicting editorial and approved capability",
+        );
       const held = index.holds.some(
         (hold) =>
           hold.appId === presentation.appId &&
@@ -282,7 +303,9 @@ export function loadCatalog(root: string) {
       }
     }),
   );
-  const appFiles = files(join(root, "catalog", "apps"));
+  const appFiles = files(join(root, "catalog", "apps")).filter(
+    (file) => !file.toLowerCase().endsWith(".md"),
+  );
   if (!appFiles.length)
     return { candidates, releases: [] as ApprovedPublication[] };
   const presentations = appFiles.filter((file) =>

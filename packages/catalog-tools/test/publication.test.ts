@@ -66,6 +66,15 @@ function fixture(
     manifest.verification.testDate =
       date;
   const editorial = structuredClone(seed);
+  editorial.setupNotes = "Test-only clean-machine setup completed.";
+  editorial.updateNotes = "Test-only update and rollback reviewed.";
+  editorial.uninstallNotes = "Test-only uninstall and retained data reviewed.";
+  editorial.license.notes =
+    "Test-only redistribution and dependency notices reviewed.";
+  editorial.distribution = {
+    capability: "standalone",
+    notes: "Test-only standalone distribution reviewed.",
+  };
   for (const key of Object.keys(
     editorial.requirements,
   ) as (keyof typeof editorial.requirements)[])
@@ -89,7 +98,7 @@ function fixture(
     editorial,
     distribution: {
       capability: "standalone",
-      notes: "Test-only clean-machine review without RepoReady.",
+      notes: editorial.distribution.notes,
       reviewedAt: date,
     },
     evidencePath: "evidence.bin",
@@ -211,6 +220,12 @@ test("publication rejects disclosure omissions, placeholder artifacts, unknown a
     (p) => {
       p.editorial.upstreamAuthor = "Someone else";
     },
+    (p) => {
+      p.editorial.setupNotes = "Unknown";
+    },
+    (p) => {
+      p.editorial.distribution.capability = "requires-repoready";
+    },
     (p, m) => {
       p.artifactSha256 =
         m.artifact.sha256 =
@@ -254,6 +269,11 @@ test("filesystem loader accepts empty approvals and fails closed for incomplete 
   try {
     assert.equal(loadCatalog(directory).releases.length, 0);
     mkdirSync(join(directory, "catalog", "apps"), { recursive: true });
+    writeFileSync(
+      join(directory, "catalog", "apps", "README.md"),
+      "Local documentation only.",
+    );
+    assert.equal(loadCatalog(directory).releases.length, 0);
     writeFileSync(join(directory, "catalog", "apps", "artifact.json"), "{}");
     assert.throws(() => loadCatalog(directory), /every release/);
   } finally {
