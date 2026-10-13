@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 const tools = {
+  tsx: "../node_modules/tsx/dist/cli.mjs",
   astro: "../node_modules/astro/bin/astro.mjs",
   wrangler: "../node_modules/wrangler/bin/wrangler.js",
 };

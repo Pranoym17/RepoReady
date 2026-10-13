@@ -4,12 +4,17 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./editorial": "./src/editorial.ts",
+    "./publication": "./src/publication.ts",
+    "./presentation": "./src/presentation.ts",
+    "./search": "./src/search.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@repoready/contracts": "*"
+    "@repoready/contracts": "*",
+    "zod": "4.6.7"
   }
 }

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node ../../scripts/tool.mjs astro dev --host 127.0.0.1",
-    "build": "node ../../scripts/tool.mjs astro build",
+    "build": "node ../../scripts/tool.mjs tsx ../../packages/catalog-tools/src/lint-cli.ts ../.. && node ../../scripts/tool.mjs astro build",
     "typecheck": "node ../../scripts/tool.mjs astro check"
   },
   "dependencies": {
+    "@repoready/catalog-tools": "*",
     "astro": "7.3.8"
   },
   "devDependencies": {
