@@ -1,0 +1,55 @@
+{
+  "id": "localsend",
+  "slug": "localsend",
+  "name": "LocalSend",
+  "summary": "Share files between devices on a local network.",
+  "description": "LocalSend provides device-to-device file sharing across platforms. Discovery and transfer depend on local networking, firewall configuration and receiving-device availability.",
+  "category": "utilities",
+  "tags": ["files", "local-network", "sharing"],
+  "useCases": ["Transfer files between devices", "Local file sharing"],
+  "sourceUrl": "https://github.com/localsend/localsend",
+  "upstreamAuthor": "LocalSend contributors",
+  "license": {
+    "spdx": "Apache-2.0",
+    "notes": "Upstream license indicator only; redistribution, dependency notices and any model/asset licenses await legal review.",
+    "evidenceUrl": "https://github.com/localsend/localsend/blob/main/LICENSE"
+  },
+  "review": {
+    "stage": "awaiting-license-review",
+    "reviewedAt": "2026-10-14T16:00:00Z",
+    "notes": "Researched upstream documentation only. Not installed, executed, packaged, security reviewed or certified by RepoReady."
+  },
+  "requirements": {
+    "platform": "Upstream targets Windows; the exact Windows version, architecture and compatibility matrix have not been selected or tested.",
+    "hardware": "No AI model is required; received files need sufficient local disk space.",
+    "disk": "Unknown for a RepoReady distribution. Measure installer, installed files, working data and optional downloads before approval.",
+    "modelDownloads": "Core workflow has no required model identified in this research; optional AI features or plugins require separate review.",
+    "network": "A reachable local network is needed for device discovery and transfers.",
+    "privacy": "Files are sent to selected devices. Verify the recipient and review firewall and network exposure before use.",
+    "apiCharges": "No paid API required for the upstream local file-transfer workflow."
+  },
+  "distribution": {
+    "capability": "unknown",
+    "notes": "Upstream distribution is research context. Independent use without RepoReady or a managed-runtime requirement must be certified for a specific version and artifact before any download is enabled."
+  },
+  "limitations": [
+    "Candidate draft only: no RepoReady release version, test date or approved artifact exists.",
+    "Installation, updating, uninstalling and recovery have not been validated on Windows."
+  ],
+  "screenshots": [],
+  "mediaNotes": "No reviewed screenshot is published. Capture or license authentic media with accessible text and provenance before release publication.",
+  "research": [
+    {
+      "url": "https://github.com/localsend/localsend",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    },
+    {
+      "url": "https://github.com/localsend/localsend/blob/main/LICENSE",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    }
+  ],
+  "proposedPackageType": null,
+  "setupNotes": "Unknown until a package is selected and a clean-machine setup is reviewed. No installation instructions are authorized for this draft.",
+  "updateNotes": "Unknown until the selected package's update and rollback behavior is tested.",
+  "uninstallNotes": "Unknown until uninstall behavior and retained user data are tested."
+}

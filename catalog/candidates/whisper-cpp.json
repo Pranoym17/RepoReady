@@ -1,0 +1,56 @@
+{
+  "id": "whisper-cpp",
+  "slug": "whisper-cpp",
+  "name": "whisper.cpp",
+  "summary": "Transcribe audio with a local speech-recognition engine.",
+  "description": "A C/C++ implementation of Whisper for speech-to-text workflows. This candidate is a command-line engine rather than a certified turnkey desktop application.",
+  "category": "ai",
+  "tags": ["transcription", "speech", "local-ai"],
+  "useCases": ["Audio transcription", "Speech-recognition experiments"],
+  "sourceUrl": "https://github.com/ggml-org/whisper.cpp",
+  "upstreamAuthor": "ggml-org and contributors",
+  "license": {
+    "spdx": "MIT",
+    "notes": "Upstream license indicator only; redistribution, dependency notices and any model/asset licenses await legal review.",
+    "evidenceUrl": "https://github.com/ggml-org/whisper.cpp/blob/master/LICENSE"
+  },
+  "review": {
+    "stage": "awaiting-license-review",
+    "reviewedAt": "2026-10-14T16:00:00Z",
+    "notes": "Researched upstream documentation only. Not installed, executed, packaged, security reviewed or certified by RepoReady."
+  },
+  "requirements": {
+    "platform": "Upstream targets Windows; the exact Windows version, architecture and compatibility matrix have not been selected or tested.",
+    "hardware": "Whisper model files must be downloaded separately; CPU/GPU performance and RAM depend on model and build.",
+    "disk": "Unknown for a RepoReady distribution. Measure installer, installed files, working data and optional downloads before approval.",
+    "modelDownloads": "Separate model files and their licenses require review; no model or download size has been approved.",
+    "network": "Model downloads require network access; local transcription can process files without an external API.",
+    "privacy": "Local file processing is supported upstream; microphone access and any server integration need review.",
+    "apiCharges": "No remote speech API is required for local transcription; optional integrations can have separate costs."
+  },
+  "distribution": {
+    "capability": "unknown",
+    "notes": "Upstream distribution is research context. Independent use without RepoReady or a managed-runtime requirement must be certified for a specific version and artifact before any download is enabled."
+  },
+  "limitations": [
+    "Candidate draft only: no RepoReady release version, test date or approved artifact exists.",
+    "Model output can be inaccurate; evaluate suitability and licensing before relying on it.",
+    "Installation, updating, uninstalling and recovery have not been validated on Windows."
+  ],
+  "screenshots": [],
+  "mediaNotes": "No reviewed screenshot is published. Capture or license authentic media with accessible text and provenance before release publication.",
+  "research": [
+    {
+      "url": "https://github.com/ggml-org/whisper.cpp",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    },
+    {
+      "url": "https://github.com/ggml-org/whisper.cpp/blob/master/LICENSE",
+      "accessedAt": "2026-10-14T16:00:00Z"
+    }
+  ],
+  "proposedPackageType": null,
+  "setupNotes": "Unknown until a package is selected and a clean-machine setup is reviewed. No installation instructions are authorized for this draft.",
+  "updateNotes": "Unknown until the selected package's update and rollback behavior is tested.",
+  "uninstallNotes": "Unknown until uninstall behavior and retained user data are tested."
+}
