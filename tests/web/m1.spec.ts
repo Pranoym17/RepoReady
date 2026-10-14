@@ -141,6 +141,29 @@ test("current availability is honest and request intake never pretends to submit
     page.locator('a[href$=".exe"],a[href$=".msi"],a[download]'),
   ).toHaveCount(0);
   await page.goto("/request/");
+  const submissions: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() !== "GET") submissions.push(request.url());
+  });
+  await page.locator("#repository-url").fill("https://example.com/org/repo");
+  await page.getByRole("button", { name: "Check link only" }).click();
+  await expect(page.locator("#repository-url")).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+  await page
+    .locator("#repository-url")
+    .fill("https://github.com/owner/project");
+  await page.getByRole("button", { name: "Check link only" }).click();
+  await expect(page.locator("#repository-url")).toHaveAttribute(
+    "aria-invalid",
+    "false",
+  );
+  await expect(page.locator("#repository-result")).toContainText(
+    "Nothing was submitted or saved",
+  );
+  expect(submissions).toEqual([]);
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
   await expect(page.locator("main")).toContainText(
     /not.*(?:open|available|active)|not accepting|not yet|inactive|coming later/i,
   );

@@ -1,30 +1,218 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 import Notice from "../components/ui/Notice.astro";
+import { getCatalog, getAppPresentation } from "../data/catalog";
+const presentations = getCatalog().map(getAppPresentation);
+const certifiedCount = presentations.filter((app) => app.isCertified).length;
+const standaloneAvailable = presentations.some(
+  (app) =>
+    app.isCertified &&
+    app.distributionLabel === "No RepoReady client required" &&
+    app.action.href,
+);
 const categories = [
-  { id: "ai", name: "AI", description: "Explore local models, assistants, and creative tools." },
-  { id: "productivity", name: "Productivity", description: "Find tools for focused work and everyday organization." },
-  { id: "media", name: "Media", description: "Discover apps for images, audio, and video." },
-  { id: "utilities", name: "Utilities", description: "Find practical tools for your computer." },
+  {
+    id: "ai",
+    name: "AI",
+    description: "Explore local models, assistants, and creative tools.",
+  },
+  {
+    id: "productivity",
+    name: "Productivity",
+    description: "Find tools for focused work and everyday organization.",
+  },
+  {
+    id: "media",
+    name: "Media",
+    description: "Discover apps for images, audio, and video.",
+  },
+  {
+    id: "utilities",
+    name: "Utilities",
+    description: "Find practical tools for your computer.",
+  },
 ];
 ---
-<SiteLayout title="Open-source apps, made approachable" description="Discover open-source app candidates, understand their requirements, and choose website downloads or optional desktop management when approved releases are available." canonicalPath="/">
-  <section class="hero section" aria-labelledby="hero-title"><div><p class="eyebrow">A clearer way to discover open source</p><h1 id="hero-title">Find your next useful app.</h1><p class="hero-description">Understand what an app does, what your computer needs, and what to expect before you install.</p><a class="button" href="/catalog/">Explore the catalog</a><p class="muted hero-note">Windows 11 x64 is the initial review target. Compatibility is assessed per app.</p></div><div class="hero-panel"><p class="eyebrow">Know before you install</p><h2>Useful details, in one place.</h2><ul><li>Purpose and practical use cases</li><li>Hardware, storage, and model downloads</li><li>Source, license, and review status</li><li>Network use, privacy, and possible API costs</li></ul><p class="muted">Clear disclosures help you decide whether an app fits your needs.</p></div></section>
-  <Notice title="An early look, with clear boundaries"><p>The catalog currently contains candidate drafts, with <strong>zero certified releases</strong>. These apps have not been tested by RepoReady. App downloads and the RepoReady Windows client are not available yet.</p></Notice>
-  <section class="section" aria-labelledby="paths-title"><p class="eyebrow">Two equally supported ways to use RepoReady</p><h2 id="paths-title">Choose the experience that suits you.</h2><div class="grid"><article class="card"><span class="tag">Website only</span><h3>Discover. Download. Use.</h3><p>Every supported app with an approved standalone distribution will have a direct, version-specific download on its website detail page. No RepoReady client or account is required.</p><p class="muted">Apps that require RepoReady's managed runtime will clearly explain that requirement before any installation action.</p></article><article class="card"><span class="tag">Optional desktop app</span><h3>Your apps, managed together.</h3><p>The desktop experience is planned for browsing, installing, launching, updating, uninstalling, and managing applications in one place.</p><p class="muted"><strong>Windows client unavailable:</strong> a download will appear only after an actual tested release is approved.</p></article></div></section>
-  <section class="section" aria-labelledby="categories-title"><p class="eyebrow">Start with what you need</p><h2 id="categories-title">Explore four categories.</h2><div class="grid category-grid">{categories.map((category) => <article class="card"><h3><a href={`/catalog/?category=${category.id}`}>{category.name}</a></h3><p class="muted">{category.description}</p></article>)}</div></section>
-  <section class="section closing"><div><h2>A useful app starts with a clear question.</h2><p class="muted">See how candidate reviews work, or learn how to suggest a project.</p></div><div class="closing-links"><a class="button button-secondary" href="/trust-safety/">How reviews work</a><a href="/request/">Request an app</a></div></section>
+
+<SiteLayout
+  title="Open-source apps, made approachable"
+  description="Discover open-source app candidates, understand their requirements, and choose website downloads or optional desktop management when approved releases are available."
+  canonicalPath="/"
+>
+  <section class="hero section" aria-labelledby="hero-title">
+    <div>
+      <p class="eyebrow">A clearer way to discover open source</p>
+      <h1 id="hero-title">Find your next useful app.</h1>
+      <p class="hero-description">
+        Understand what an app does, what your computer needs, and what to
+        expect before you install.
+      </p>
+      <a class="button" href="/catalog/">
+        Explore the catalog
+      </a>
+      <p class="muted hero-note">
+        Windows 11 x64 is the initial review target. Compatibility is assessed
+        per app.
+      </p>
+    </div>
+    <div class="hero-panel">
+      <p class="eyebrow">Know before you install</p>
+      <h2>Useful details, in one place.</h2>
+      <ul>
+        <li>Purpose and practical use cases</li>
+        <li>Hardware, storage, and model downloads</li>
+        <li>Source, license, and review status</li>
+        <li>Network use, privacy, and possible API costs</li>
+      </ul>
+      <p class="muted">
+        Clear disclosures help you decide whether an app fits your needs.
+      </p>
+    </div>
+  </section>
+  <Notice title="An early look, with clear boundaries">
+    <p>
+      {certifiedCount === 0 ? (
+        <>
+          <strong>Zero certified releases.</strong> The catalog currently
+          contains candidate drafts. These apps have not been tested by
+          RepoReady.
+        </>
+      ) : (
+        <>
+          <strong>{certifiedCount} certified applications.</strong> Check each
+          listing for its approved version, requirements and availability.
+          Research drafts remain separately labeled.
+        </>
+      )}
+      {standaloneAvailable
+        ? "Approved standalone downloads are available on their app detail pages, without RepoReady."
+        : "App downloads are not available yet."}{" "}
+      The RepoReady Windows client is not available yet.
+    </p>
+  </Notice>
+  <section class="section" aria-labelledby="paths-title">
+    <p class="eyebrow">Two equally supported ways to use RepoReady</p>
+    <h2 id="paths-title">Choose the experience that suits you.</h2>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Website only</span>
+        <h3>Discover. Download. Use.</h3>
+        <p>
+          Every supported app with an approved standalone distribution will have
+          a direct, version-specific download on its website detail page. No
+          RepoReady client or account is required.
+        </p>
+        <p class="muted">
+          Apps that require RepoReady's managed runtime will clearly explain
+          that requirement before any installation action.
+        </p>
+      </article>
+      <article class="card">
+        <span class="tag">Optional desktop app</span>
+        <h3>Your apps, managed together.</h3>
+        <p>
+          The desktop experience is planned for browsing, installing, launching,
+          updating, uninstalling, and managing applications in one place.
+        </p>
+        <p class="muted">
+          <strong>Windows client unavailable:</strong> a download will appear
+          only after an actual tested release is approved.
+        </p>
+      </article>
+    </div>
+  </section>
+  <section class="section" aria-labelledby="categories-title">
+    <p class="eyebrow">Start with what you need</p>
+    <h2 id="categories-title">Explore four categories.</h2>
+    <div class="grid category-grid">
+      {categories.map((category) => (
+        <article class="card">
+          <h3>
+            <a href={`/catalog/?category=${category.id}`}>{category.name}</a>
+          </h3>
+          <p class="muted">{category.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class="section closing">
+    <div>
+      <h2>A useful app starts with a clear question.</h2>
+      <p class="muted">
+        See how candidate reviews work, or learn how to suggest a project.
+      </p>
+    </div>
+    <div class="closing-links">
+      <a class="button button-secondary" href="/trust-safety/">
+        How reviews work
+      </a>
+      <a href="/request/">Request an app</a>
+    </div>
+  </section>
 </SiteLayout>
 <style>
-  .hero { display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 3rem; padding-block: 4rem; }
-  .hero-description { font-size: 1.2rem; max-width: 48ch; }
-  .hero-note { margin: 1rem 0 0; font-size: .9rem; max-width: 48ch; }
-  .hero-panel { background: var(--color-soft); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 2rem; }
-  .hero-panel ul { padding-left: 1.25rem; margin-bottom: 1.5rem; }
-  .hero-panel li { margin-block: .6rem; }
-  .category-grid { grid-template-columns: repeat(4, 1fr); }
-  .closing { border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
-  .closing-links { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 2rem; padding-block: 2.5rem; } .category-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .category-grid { grid-template-columns: 1fr; } .hero-panel { padding: 1.5rem; } }
+  .hero {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: 3rem;
+    padding-block: 4rem;
+  }
+  .hero-description {
+    font-size: 1.2rem;
+    max-width: 48ch;
+  }
+  .hero-note {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    max-width: 48ch;
+  }
+  .hero-panel {
+    background: var(--color-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+  .hero-panel ul {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-panel li {
+    margin-block: 0.6rem;
+  }
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .closing {
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .closing-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-block: 2.5rem;
+    }
+    .category-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-panel {
+      padding: 1.5rem;
+    }
+  }
 </style>

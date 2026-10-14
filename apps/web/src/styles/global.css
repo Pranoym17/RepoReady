@@ -93,10 +93,10 @@ button:disabled {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.page-heading {
+header.page-heading {
   padding-block: 3.5rem 2rem;
 }
-.page-heading > p:not(.eyebrow) {
+header.page-heading > p:not(.eyebrow) {
   max-width: 65ch;
   font-size: 1.15rem;
 }
@@ -220,7 +220,7 @@ button:disabled {
   .section {
     padding-block: 2rem;
   }
-  .page-heading {
+  header.page-heading {
     padding-top: 2rem;
   }
 }

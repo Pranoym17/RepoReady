@@ -1,7 +1,69 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 ---
-<SiteLayout title="Support" description="Find RepoReady's source and issue tracker, report catalog problems safely, and understand current support and release limitations." canonicalPath="/support/">
-  <header class="page-heading"><p class="eyebrow">Help improve the catalog</p><h1>Support</h1><p>RepoReady is in development. The project repository is the current place for website feedback and catalog corrections.</p></header>
-  <div class="prose"><p><a class="button" href="https://github.com/Pranoym17/RepoReady/issues">Open the project issue tracker</a></p><h2>What to include in a report</h2><ul><li>The page URL or candidate name.</li><li>What you expected and what happened.</li><li>Your browser, operating system, and the steps needed to reproduce a website problem.</li><li>A source link for a correction to license, author, compatibility, privacy, or cost information.</li></ul><div class="notice"><p><strong>Reports are public.</strong> Remove API keys, passwords, tokens, personal files, and identifying information. Do not post exploit details publicly. Check the <a href="https://github.com/Pranoym17/RepoReady/security/policy">repository security policy page</a> for any published private reporting instructions; a private reporting channel is not guaranteed.</p></div><h2>Upstream application support</h2><p>For behavior in an upstream app, use the source and support links on its catalog detail page. RepoReady's candidate descriptions do not imply that the application has been packaged, tested, or supported by this project.</p><h2>Known limitations</h2><p>There are no certified app releases or tested RepoReady desktop installers available yet. Website request intake, installation, updates, and app management are planned capabilities. No response-time or support-service guarantee is offered.</p><h2>Suggest an app</h2><p>Read <a href="/request/">the app request guidance</a> for the information needed to propose a public upstream project. The website does not yet accept or persist submissions.</p></div>
+
+<SiteLayout
+  title="Support"
+  description="Find RepoReady's source and issue tracker, report catalog problems safely, and understand current support and release limitations."
+  canonicalPath="/support/"
+>
+  <header class="page-heading">
+    <p class="eyebrow">Help improve the catalog</p>
+    <h1>Support</h1>
+    <p>
+      RepoReady is in development. The project repository is the current place
+      for website feedback and catalog corrections.
+    </p>
+  </header>
+  <div class="prose">
+    <p>
+      <a class="button" href="https://github.com/Pranoym17/RepoReady/issues">
+        Open the project issue tracker
+      </a>
+    </p>
+    <h2>What to include in a report</h2>
+    <ul>
+      <li>The page URL or candidate name.</li>
+      <li>What you expected and what happened.</li>
+      <li>
+        Your browser, operating system, and the steps needed to reproduce a
+        website problem.
+      </li>
+      <li>
+        A source link for a correction to license, author, compatibility,
+        privacy, or cost information.
+      </li>
+    </ul>
+    <div class="notice">
+      <p>
+        <strong>Reports are public.</strong> Remove API keys, passwords, tokens,
+        personal files, and identifying information. Do not post exploit details
+        publicly. Check the{" "}
+        <a href="https://github.com/Pranoym17/RepoReady/security">
+          repository security page
+        </a>{" "}
+        for any published private reporting instructions; a private reporting
+        channel is not guaranteed.
+      </p>
+    </div>
+    <h2>Upstream application support</h2>
+    <p>
+      For behavior in an upstream app, use the source and support links on its
+      catalog detail page. RepoReady's candidate descriptions do not imply that
+      the application has been packaged, tested, or supported by this project.
+    </p>
+    <h2>Known limitations</h2>
+    <p>
+      There are no certified app releases or tested RepoReady desktop installers
+      available yet. Website request intake, installation, updates, and app
+      management are planned capabilities. No response-time or support-service
+      guarantee is offered.
+    </p>
+    <h2>Suggest an app</h2>
+    <p>
+      Read <a href="/request/">the app request guidance</a> for the information
+      needed to propose a public upstream project. The website does not yet
+      accept or persist submissions.
+    </p>
+  </div>
 </SiteLayout>

@@ -38,7 +38,7 @@ test("categories compose with queries and input is not mutated", () => {
     searchCatalog(candidates).map((app) => app.slug),
     ["alpha", "zebra"],
   );
-  assert.equal(candidates[0].slug, "zebra");
+  assert.equal(candidates[0]?.slug, "zebra");
 });
 
 test("request validation accepts only a canonical HTTPS GitHub repository", () => {

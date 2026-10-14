@@ -1,9 +1,22 @@
-import { fileURLToPath } from "node:url";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { loadCatalog } from "@repoready/catalog-tools/publication";
 import type { Candidate } from "@repoready/catalog-tools/editorial";
 import { selectWebsiteAction } from "@repoready/catalog-tools/presentation";
 
-const root = fileURLToPath(new URL("../../../../", import.meta.url));
+// Vite bundles this module into a different directory. Resolve the workspace
+// from its checked identity rather than the generated module's import.meta.url.
+let root = process.cwd();
+while (
+  !existsSync(join(root, "catalog", "trust-roots.json")) ||
+  !existsSync(join(root, "package.json")) ||
+  JSON.parse(readFileSync(join(root, "package.json"), "utf8")).name !==
+    "repoready"
+) {
+  const parent = dirname(root);
+  if (parent === root) throw new Error("RepoReady catalog workspace not found");
+  root = parent;
+}
 // Only the build-time loader joins signed approval and evidence. It is not
 // shipped to browsers and never reads candidate records as install manifests.
 const catalog = loadCatalog(root);
@@ -65,7 +78,21 @@ export function getAppPresentation(candidate: Candidate) {
         ? "No RepoReady client required"
         : "Requires the RepoReady desktop app"
       : "Distribution requirements not certified by RepoReady",
+    distributionNotes:
+      approved?.presentation.distribution.notes ?? candidate.distribution.notes,
     version: approved?.manifest.release.version ?? null,
     testedAt: approved?.manifest.verification.testDate ?? null,
+    releaseDetails: approved
+      ? {
+          downloadBytes: approved.manifest.artifact.sizeBytes,
+          minWindowsBuild: approved.manifest.app.requirements.minWindowsBuild,
+          minRamMb: approved.manifest.app.requirements.minRamMb,
+          diskMb: approved.manifest.app.requirements.diskMb,
+          extraDownloadBytes:
+            approved.manifest.app.requirements.extraDownloadBytes,
+          requiredPrivileges: approved.manifest.artifact.requiredPrivileges,
+          apiProviders: approved.manifest.app.requirements.externalApiProviders,
+        }
+      : null,
   };
 }

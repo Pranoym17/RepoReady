@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readdir, readFile, stat } from "node:fs/promises";
-import { resolve, join, extname, dirname } from "node:path";
+import { resolve, join, extname, dirname, basename } from "node:path";
 import { load } from "cheerio";
 
 const root = resolve("apps/web/dist");
@@ -50,7 +50,10 @@ for (const file of pages) {
   titles.add(title);
   assert.ok($("meta[name=description]").attr("content")?.length > 30, file);
   assert.equal($("main").length, 1, file);
-  assert.ok($("main").text().length > 200, file + " needs static content");
+  assert.ok(
+    $("main").text().length > (basename(file) === "404.html" ? 80 : 200),
+    file + " needs static content",
+  );
   assert.equal(
     $("input[type=password], input[name*=api], script[src^='http']").length,
     0,

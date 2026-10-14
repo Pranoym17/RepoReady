@@ -73,7 +73,8 @@ export function canonicalGithubRepository(value: string): string | null {
       )
     )
       return null;
-    if (parts[1].endsWith(".git")) parts[1] = parts[1].slice(0, -4);
+    const repository = parts[1]!;
+    if (repository.endsWith(".git")) parts[1] = repository.slice(0, -4);
     if (!parts[1]) return null;
     return `https://github.com/${parts.join("/")}`;
   } catch {

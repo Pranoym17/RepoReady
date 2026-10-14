@@ -1,5 +1,8 @@
 ---
-interface Props { label: string; }
+interface Props {
+  label: string;
+}
 const { label } = Astro.props;
 ---
+
 <span class="status-badge">{label}</span>

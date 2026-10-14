@@ -1,7 +1,62 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 ---
-<SiteLayout title="Privacy" description="What the current static RepoReady website does with search, external links, accounts, API keys, and planned request-service data." canonicalPath="/privacy/">
-  <header class="page-heading"><p class="eyebrow">Current website behavior</p><h1>Privacy</h1><p>This page describes the static discovery website. It will need an update before request intake or desktop services become available.</p></header>
-  <div class="prose"><h2>Browsing and searching</h2><p>The website does not require an account and includes no analytics, advertising trackers, or tracking cookies. Catalog filtering runs in your browser. Search and category choices may appear in the page URL so you can share or revisit a filtered catalog.</p><p>The code does not send search terms to a search service or store them in browser storage. Your browser history may retain visited URLs. A hosting provider may process ordinary web-request information such as IP address, requested URL, and user agent; deployment-specific retention details must be disclosed when hosting is configured.</p><h2>External project links and downloads</h2><p>Source, license, support, and future approved artifact links take you to an external provider. That provider's privacy policy applies after navigation. Each app's detail page describes known network use and potential data destinations, with unknown details labeled for review.</p><h2>Credentials and API keys</h2><p>This website does not collect API keys, passwords, payment details, or local files. Some upstream apps may require a paid external API or account. Read the app's disclosures and the provider's terms before using them.</p><h2>App requests are not collected here yet</h2><p>The request entry page explains the planned process. There is no active website submission endpoint, request queue, tracking ID, or confirmation of receipt. A future request service will require a policy explaining what is collected, why, retention, and deletion.</p><h2>Public support reports</h2><p>GitHub issues and other public upstream reports are visible to others and governed by the platform's policy. Remove secrets and personal information before posting. See <a href="/support/">support</a> for the current reporting channels.</p></div>
+
+<SiteLayout
+  title="Privacy"
+  description="What the current static RepoReady website does with search, external links, accounts, API keys, and planned request-service data."
+  canonicalPath="/privacy/"
+>
+  <header class="page-heading">
+    <p class="eyebrow">Current website behavior</p>
+    <h1>Privacy</h1>
+    <p>
+      This page describes the static discovery website. It will need an update
+      before request intake or desktop services become available.
+    </p>
+  </header>
+  <div class="prose">
+    <h2>Browsing and searching</h2>
+    <p>
+      The website does not require an account and includes no analytics,
+      advertising trackers, or tracking cookies. Catalog filtering runs in your
+      browser. Search and category choices may appear in the page URL so you can
+      share or revisit a filtered catalog.
+    </p>
+    <p>
+      The code does not send search terms to a search service or store them in
+      browser storage. Your browser history may retain visited URLs. A hosting
+      provider may process ordinary web-request information such as IP address,
+      requested URL, and user agent; deployment-specific retention details must
+      be disclosed when hosting is configured.
+    </p>
+    <h2>External project links and downloads</h2>
+    <p>
+      Source, license, support, and future approved artifact links take you to
+      an external provider. That provider's privacy policy applies after
+      navigation. Each app's detail page describes known network use and
+      potential data destinations, with unknown details labeled for review.
+    </p>
+    <h2>Credentials and API keys</h2>
+    <p>
+      This website does not collect API keys, passwords, payment details, or
+      local files. Some upstream apps may require a paid external API or
+      account. Read the app's disclosures and the provider's terms before using
+      them.
+    </p>
+    <h2>App requests are not collected here yet</h2>
+    <p>
+      The request entry page explains the planned process. There is no active
+      website submission endpoint, request queue, tracking ID, or confirmation
+      of receipt. A future request service will require a policy explaining what
+      is collected, why, retention, and deletion.
+    </p>
+    <h2>Public support reports</h2>
+    <p>
+      GitHub issues and other public upstream reports are visible to others and
+      governed by the platform's policy. Remove secrets and personal information
+      before posting. See <a href="/support/">support</a> for the current
+      reporting channels.
+    </p>
+  </div>
 </SiteLayout>

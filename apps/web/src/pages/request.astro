@@ -1,24 +1,80 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+import SiteLayout from "../layouts/SiteLayout.astro";
 ---
-<SiteLayout title="Request a project" description="Learn what RepoReady needs to review a project. Request intake is not yet available; a local GitHub URL check does not submit a request." canonicalPath="/request/">
+
+<SiteLayout
+  title="Request a project"
+  description="Learn what RepoReady needs to review a project. Request intake is not yet available; a local GitHub URL check does not submit a request."
+  canonicalPath="/request/"
+>
   <section class="section prose">
     <p class="eyebrow">Help shape the catalog</p>
     <h1 class="page-heading">Request a project</h1>
-    <div class="notice"><strong>Request intake is not available yet.</strong><p>This website does not send, store, or queue requests. There is no submission service or request tracking ID. Check back when intake opens.</p></div>
+    <div class="notice">
+      <strong>Request intake is not available yet.</strong>
+      <p>
+        This website does not send, store, or queue requests. There is no
+        submission service or request tracking ID. Check back when intake opens.
+      </p>
+    </div>
     <h2>What a review needs</h2>
-    <ul><li>A public project source and identifiable author.</li><li>A license that permits the intended distribution.</li><li>Clear installation instructions, platform support, resource needs, and costs.</li><li>Privacy and network disclosures, maintained releases, and known limitations.</li></ul>
-    <p>Reviewing a candidate does not guarantee packaging, certification, or publication. Standalone distribution and the managed-runtime requirement are assessed separately.</p>
+    <ul>
+      <li>A public project source and identifiable author.</li>
+      <li>A license that permits the intended distribution.</li>
+      <li>
+        Clear installation instructions, platform support, resource needs, and
+        costs.
+      </li>
+      <li>
+        Privacy and network disclosures, maintained releases, and known
+        limitations.
+      </li>
+    </ul>
+    <p>
+      Reviewing a candidate does not guarantee packaging, certification, or
+      publication. Standalone distribution and the managed-runtime requirement
+      are assessed separately.
+    </p>
     <form id="request-check" hidden>
       <h2>Check a repository link locally</h2>
-      <label class="field-label" for="repository-url">Public GitHub repository URL</label>
-      <input class="field" id="repository-url" type="url" required maxlength="300" placeholder="https://github.com/owner/project" aria-describedby="repository-help repository-result" />
-      <p id="repository-help">Use an HTTPS GitHub link to the repository root. This check stays in your browser and does not submit a request.</p>
-      <button class="button" type="submit">Check link only</button>
-      <p id="repository-result" role="status" aria-live="polite" aria-atomic="true"></p>
+      <label class="field-label" for="repository-url">
+        Public GitHub repository URL
+      </label>
+      <input
+        class="field"
+        id="repository-url"
+        type="url"
+        required
+        maxlength="300"
+        placeholder="https://github.com/owner/project"
+        aria-describedby="repository-help repository-result"
+      />
+      <p id="repository-help">
+        Use an HTTPS GitHub link to the repository root. This check stays in
+        your browser and does not submit a request.
+      </p>
+      <button class="button" type="submit">
+        Check link only
+      </button>
+      <p
+        id="repository-result"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></p>
     </form>
-    <noscript><p>A repository link should look like https://github.com/owner/project. Local format checking requires JavaScript.</p></noscript>
-    <p><a href="/catalog/">Browse existing candidates</a> · <a href="/support/">Support and current availability</a></p>
+    <noscript>
+      <p>
+        A repository link should look like https://github.com/owner/project.
+        Local format checking requires JavaScript.
+      </p>
+    </noscript>
+    <p>
+      <a href="/catalog/">Browse existing candidates</a> ·{" "}
+      <a href="/support/">Support and current availability</a>
+    </p>
   </section>
-  <script>import '../scripts/request-check';</script>
+  <script>
+    import "../scripts/request-check";
+  </script>
 </SiteLayout>

@@ -1,44 +1,281 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { getCatalog, getAppPresentation } from '../../data/catalog';
-import type { Candidate } from '../../../../../packages/catalog-tools/src/editorial';
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { getCatalog, getAppPresentation } from "../../data/catalog";
+import type { Candidate } from "../../../../../packages/catalog-tools/src/editorial";
 export function getStaticPaths() {
-  return getCatalog().map((app) => ({params: {slug: app.slug}, props: {app}}));
+  return getCatalog().map((app) => ({
+    params: { slug: app.slug },
+    props: { app },
+  }));
 }
-interface Props { app: Candidate }
+interface Props {
+  app: Candidate;
+}
 const { app } = Astro.props;
 const presentation = getAppPresentation(app);
 const isDraft = presentation.version === null;
-const reviewLabel = app.review.stage.replaceAll('-', ' ');
+const reviewLabel = app.review.stage.replaceAll("-", " ");
 ---
-<SiteLayout title={`${app.name}${isDraft ? ' — research preview' : ''}`} description={app.summary} canonicalPath={`/apps/${app.slug}/`}>
+
+<SiteLayout
+  title={`${app.name}${isDraft ? " — research preview" : ""}`}
+  description={app.summary}
+  canonicalPath={`/apps/${app.slug}/`}
+>
   <article class="section prose">
-    <nav aria-label="Breadcrumb"><a href="/catalog/">Catalog</a> / <span>{app.name}</span></nav>
-    <p class="eyebrow">{app.category} · {isDraft ? 'Research preview' : 'Release information'}</p>
+    <nav aria-label="Breadcrumb">
+      <a href="/catalog/">Catalog</a> /{" "}
+      <span aria-current="page">{app.name}</span>
+    </nav>
+    <p class="eyebrow">
+      {app.category} · {isDraft ? "Research preview" : "Release information"}
+    </p>
     <h1 class="page-heading">{app.name}</h1>
     <p>{app.summary}</p>
     <div class="notice">
       <strong class="status-badge">{presentation.statusLabel}</strong>
-      {isDraft && <p>This is draft discovery content, not a certified RepoReady release. RepoReady has not tested or approved an installer for this candidate.</p>}
-      <p>{presentation.distributionLabel}: {app.distribution.notes}</p>
+      {isDraft && (
+        <p>
+          This is draft discovery content, not a certified RepoReady release.
+          RepoReady has not tested or approved an installer for this candidate.
+        </p>
+      )}
+      <p>
+        {presentation.distributionLabel}: {presentation.distributionNotes}
+      </p>
       <p>{presentation.action.notice}</p>
-      {presentation.action.href ? <a class="button" data-primary-action href={presentation.action.href}>{presentation.action.label}</a> : <p data-primary-action><strong>{presentation.action.label}</strong></p>}
+      {presentation.action.href ? (
+        <a class="button" data-primary-action href={presentation.action.href}>
+          {presentation.action.label}
+        </a>
+      ) : (
+        <p data-primary-action>
+          <strong>{presentation.action.label}</strong>
+        </p>
+      )}
     </div>
-    <section aria-labelledby="about-heading"><h2 id="about-heading">What it does</h2><p>{app.description}</p><h3>Use cases</h3><ul>{app.useCases.map((useCase) => <li>{useCase}</li>)}</ul><p><strong>Tags:</strong> {app.tags.join(', ')}</p></section>
-    <section aria-labelledby="source-heading"><h2 id="source-heading">Author, source, and license</h2><dl><dt>Upstream author</dt><dd>{app.upstreamAuthor}</dd><dt>Source project</dt><dd><a href={app.sourceUrl}>{app.sourceUrl}</a></dd><dt>License</dt><dd>{app.license.spdx ?? 'Unknown — license review required'}. {app.license.notes} <a href={app.license.evidenceUrl}>License evidence</a></dd></dl><p>Upstream links are research sources. They are not approved RepoReady download actions.</p></section>
-    <section aria-labelledby="requirements-heading"><h2 id="requirements-heading">Compatibility and requirements</h2><dl><dt>Platform</dt><dd>{app.requirements.platform}</dd><dt>Hardware</dt><dd>{app.requirements.hardware}</dd><dt>Disk space</dt><dd>{app.requirements.disk}</dd><dt>Model downloads</dt><dd>{app.requirements.modelDownloads}</dd><dt>Network use</dt><dd>{app.requirements.network}</dd><dt>Privacy</dt><dd>{app.requirements.privacy}</dd><dt>API charges</dt><dd>{app.requirements.apiCharges}</dd><dt>Proposed package type</dt><dd>{app.proposedPackageType ?? 'Unknown — packaging review required'}</dd></dl><p>These are research notes. Compatibility and resource estimates need release-specific testing before publication.</p></section>
-    <section aria-labelledby="lifecycle-heading"><h2 id="lifecycle-heading">Setup and management</h2><dl><dt>Setup</dt><dd>{app.setupNotes}</dd><dt>Updates</dt><dd>{app.updateNotes}</dd><dt>Uninstall</dt><dd>{app.uninstallNotes}</dd></dl><p>Approved standalone releases can be used without RepoReady. Managed-runtime releases will explain the client requirement before download or installation.</p></section>
-    <section aria-labelledby="limitations-heading"><h2 id="limitations-heading">Limitations</h2><ul>{app.limitations.map((limitation) => <li>{limitation}</li>)}</ul></section>
-    <section aria-labelledby="media-heading"><h2 id="media-heading">Screenshots and media</h2>{app.screenshots.length ? app.screenshots.map((screenshot) => <figure><img src={screenshot.url} alt={screenshot.alt} loading="lazy" width="960" height="600" /><figcaption>{screenshot.credit} · <a href={screenshot.sourceUrl}>Media source</a></figcaption></figure>) : <p>No licensed screenshot is published for this draft. Screenshots and reuse rights must be reviewed before release publication.</p>}<p>{app.mediaNotes}</p></section>
-    <section aria-labelledby="review-heading"><h2 id="review-heading">Review status and evidence</h2><dl><dt>Candidate review</dt><dd>{reviewLabel}</dd><dt>Research reviewed</dt><dd><time datetime={app.review.reviewedAt}>{app.review.reviewedAt.slice(0, 10)}</time></dd><dt>Release version</dt><dd>{presentation.version ?? 'Not applicable — no approved RepoReady release.'}</dd><dt>RepoReady testing date</dt><dd>{presentation.testedAt ?? 'Not tested.'}</dd></dl><p>{app.review.notes}</p><h3>Research sources</h3><ul>{app.research.map((source) => <li><a href={source.url}>{source.url}</a> — accessed <time datetime={source.accessedAt}>{source.accessedAt.slice(0, 10)}</time></li>)}</ul></section>
+    <section aria-labelledby="about-heading">
+      <h2 id="about-heading">What it does</h2>
+      <p>{app.description}</p>
+      <h3>Use cases</h3>
+      <ul>
+        {app.useCases.map((useCase) => (
+          <li>{useCase}</li>
+        ))}
+      </ul>
+      <p>
+        <strong>Tags:</strong> {app.tags.join(", ")}
+      </p>
+    </section>
+    <section aria-labelledby="source-heading">
+      <h2 id="source-heading">Author, source, and license</h2>
+      <dl>
+        <dt>Upstream author</dt>
+        <dd>{app.upstreamAuthor}</dd>
+        <dt>Source project</dt>
+        <dd>
+          <a href={app.sourceUrl}>{app.sourceUrl}</a>
+        </dd>
+        <dt>License</dt>
+        <dd>
+          {app.license.spdx ?? "Unknown — license review required"}.{" "}
+          {app.license.notes}{" "}
+          <a href={app.license.evidenceUrl}>License evidence</a>
+        </dd>
+      </dl>
+      <p>
+        Upstream links are research sources. They are not approved RepoReady
+        download actions.
+      </p>
+    </section>
+    <section aria-labelledby="requirements-heading">
+      <h2 id="requirements-heading">Compatibility and requirements</h2>
+      <dl>
+        <dt>Installer download</dt>
+        <dd>
+          {presentation.releaseDetails
+            ? `${presentation.releaseDetails.downloadBytes.toLocaleString("en")} bytes`
+            : "Not reviewed — no approved package."}
+        </dd>
+        <dt>Platform</dt>
+        <dd>{app.requirements.platform}</dd>
+        <dt>Hardware</dt>
+        <dd>{app.requirements.hardware}</dd>
+        <dt>Disk space</dt>
+        <dd>{app.requirements.disk}</dd>
+        <dt>Model downloads</dt>
+        <dd>{app.requirements.modelDownloads}</dd>
+        <dt>Network use</dt>
+        <dd>{app.requirements.network}</dd>
+        <dt>Privacy</dt>
+        <dd>{app.requirements.privacy}</dd>
+        <dt>API charges</dt>
+        <dd>{app.requirements.apiCharges}</dd>
+        <dt>Proposed package type</dt>
+        <dd>
+          {app.proposedPackageType ?? "Unknown — packaging review required"}
+        </dd>
+      </dl>
+      {presentation.releaseDetails && (
+        <dl>
+          <dt>Tested release minimums</dt>
+          <dd>
+            Windows 11 x64, build {presentation.releaseDetails.minWindowsBuild}{" "}
+            or later;{" "}
+            {presentation.releaseDetails.minRamMb.toLocaleString("en")} MB RAM;{" "}
+            {presentation.releaseDetails.diskMb.toLocaleString("en")} MB disk
+            space.
+          </dd>
+          <dt>Additional downloads</dt>
+          <dd>
+            {presentation.releaseDetails.extraDownloadBytes.toLocaleString(
+              "en",
+            )}{" "}
+            bytes. See the model and runtime notes above.
+          </dd>
+          <dt>Installation permissions</dt>
+          <dd>
+            {presentation.releaseDetails.requiredPrivileges === "administrator"
+              ? "Administrator permission required"
+              : "Ordinary user installation"}
+          </dd>
+          <dt>External API providers</dt>
+          <dd>
+            {presentation.releaseDetails.apiProviders.join(", ") ||
+              "None required by this reviewed release"}
+            . See charges above.
+          </dd>
+        </dl>
+      )}
+      {isDraft ? (
+        <p>
+          These are research notes. Compatibility and resource estimates need
+          release-specific testing before publication.
+        </p>
+      ) : (
+        <p>
+          Requirements were reviewed for release {presentation.version}. Testing
+          date: {presentation.testedAt}.
+        </p>
+      )}
+    </section>
+    <section aria-labelledby="lifecycle-heading">
+      <h2 id="lifecycle-heading">Setup and management</h2>
+      <dl>
+        <dt>Setup</dt>
+        <dd>{app.setupNotes}</dd>
+        <dt>Updates</dt>
+        <dd>{app.updateNotes}</dd>
+        <dt>Uninstall</dt>
+        <dd>{app.uninstallNotes}</dd>
+      </dl>
+      <p>
+        Approved standalone releases can be used without RepoReady.
+        Managed-runtime releases will explain the client requirement before
+        download or installation.
+      </p>
+    </section>
+    <section aria-labelledby="limitations-heading">
+      <h2 id="limitations-heading">Limitations</h2>
+      <ul>
+        {app.limitations.map((limitation) => (
+          <li>{limitation}</li>
+        ))}
+      </ul>
+    </section>
+    <section aria-labelledby="media-heading">
+      <h2 id="media-heading">Screenshots and media</h2>
+      {app.screenshots.length ? (
+        app.screenshots.map((screenshot) => (
+          <figure>
+            <img
+              src={screenshot.url}
+              alt={screenshot.alt}
+              loading="lazy"
+              width="960"
+              height="600"
+            />
+            <figcaption>
+              {screenshot.credit} ·{" "}
+              <a href={screenshot.sourceUrl}>Media source</a>
+            </figcaption>
+          </figure>
+        ))
+      ) : (
+        <p>
+          No licensed screenshot is published for this draft. Screenshots and
+          reuse rights must be reviewed before release publication.
+        </p>
+      )}
+      <p>{app.mediaNotes}</p>
+    </section>
+    <section aria-labelledby="review-heading">
+      <h2 id="review-heading">Review status and evidence</h2>
+      <dl>
+        {isDraft && (
+          <>
+            <dt>Candidate review</dt>
+            <dd>{reviewLabel}</dd>
+          </>
+        )}
+        <dt>Research reviewed</dt>
+        <dd>
+          <time datetime={app.review.reviewedAt}>
+            {app.review.reviewedAt.slice(0, 10)}
+          </time>
+        </dd>
+        <dt>Release version</dt>
+        <dd>
+          {presentation.version ??
+            "Not applicable — no approved RepoReady release."}
+        </dd>
+        <dt>RepoReady testing date</dt>
+        <dd>{presentation.testedAt ?? "Not tested."}</dd>
+      </dl>
+      <p>{app.review.notes}</p>
+      <h3>Research sources</h3>
+      <ul>
+        {app.research.map((source) => (
+          <li>
+            <a href={source.url}>{source.url}</a> — accessed{" "}
+            <time datetime={source.accessedAt}>
+              {source.accessedAt.slice(0, 10)}
+            </time>
+          </li>
+        ))}
+      </ul>
+    </section>
   </article>
 </SiteLayout>
 <style>
-  dl { display: grid; grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr); gap: .75rem 1.5rem; }
-  dt { font-weight: 700; }
-  dd { margin: 0; overflow-wrap: anywhere; }
-  section { margin-top: 2.5rem; }
-  img { max-width: 100%; height: auto; }
-  figure { margin-inline: 0; }
-  @media (max-width: 35rem) { dl { grid-template-columns: 1fr; } dd { margin-bottom: .75rem; } }
+  dl {
+    display: grid;
+    grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr);
+    gap: 0.75rem 1.5rem;
+  }
+  dt {
+    font-weight: 700;
+  }
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  section {
+    margin-top: 2.5rem;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  figure {
+    margin-inline: 0;
+  }
+  @media (max-width: 35rem) {
+    dl {
+      grid-template-columns: 1fr;
+    }
+    dd {
+      margin-bottom: 0.75rem;
+    }
+  }
 </style>
