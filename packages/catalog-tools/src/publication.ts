@@ -1,6 +1,6 @@
 import { createPublicKey, type KeyObject } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import { z } from "zod";
 import {
   Id,
@@ -269,6 +269,7 @@ export function authenticatePublications(options: {
     } catch (error) {
       throw new Error(
         `approved[${position}]: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       );
     }
   }
@@ -299,12 +300,15 @@ export function loadCatalog(root: string) {
       try {
         return JSON.parse(readFileSync(file, "utf8")) as unknown;
       } catch (error) {
-        throw new Error(`candidate ${file}: ${String(error)}`);
+        throw new Error(`candidate ${file}: ${String(error)}`, {
+          cause: error,
+        });
       }
     }),
   );
   const appFiles = files(join(root, "catalog", "apps")).filter(
-    (file) => !file.toLowerCase().endsWith(".md"),
+    (file) =>
+      !file.toLowerCase().endsWith(".md") && basename(file) !== ".gitkeep",
   );
   if (!appFiles.length)
     return { candidates, releases: [] as ApprovedPublication[] };

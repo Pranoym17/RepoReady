@@ -269,6 +269,8 @@ test("filesystem loader accepts empty approvals and fails closed for incomplete 
   try {
     assert.equal(loadCatalog(directory).releases.length, 0);
     mkdirSync(join(directory, "catalog", "apps"), { recursive: true });
+    writeFileSync(join(directory, "catalog", "apps", ".gitkeep"), "");
+    assert.equal(loadCatalog(directory).releases.length, 0);
     writeFileSync(
       join(directory, "catalog", "apps", "README.md"),
       "Local documentation only.",
