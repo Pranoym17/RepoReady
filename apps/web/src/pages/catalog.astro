@@ -1,0 +1,39 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import AppCard from '../components/catalog/AppCard.astro';
+import { getCatalog, getAppPresentation } from '../data/catalog';
+import { searchCatalog, catalogCategories } from '../../../../packages/catalog-tools/src/search';
+const apps = searchCatalog(getCatalog());
+const drafts = apps.filter((app) => getAppPresentation(app).version === null).length;
+const certified = apps.filter((app) => getAppPresentation(app).isCertified).length;
+const searchable = apps.map(({name, slug, summary, description, category, tags, useCases}) => ({name, slug, summary, description, category, tags, useCases}));
+---
+<SiteLayout title="Application catalog" description="Explore RepoReady applications and research candidates across AI, productivity, media, and utilities. Draft previews are distinct from certified releases." canonicalPath="/catalog/">
+  <section class="section" aria-labelledby="catalog-heading">
+    <p class="eyebrow">Discover a project</p>
+    <h1 id="catalog-heading" class="page-heading">Application catalog</h1>
+    <p>Browse useful open-source projects and the details you need before choosing an application.</p>
+    <div class="notice">
+      <strong>{drafts} research drafts · {certified} certified applications</strong>
+      <p>Research previews are not tested RepoReady releases and have no enabled installer. Approved standalone releases can be downloaded directly here, without installing RepoReady. Apps that need the managed runtime clearly say so.</p>
+    </div>
+    <form id="catalog-search" class="search" method="get" action="/catalog/" hidden>
+      <div><label class="field-label" for="catalog-query">Search by name, use case, or tag</label><input class="field" id="catalog-query" name="q" type="search" maxlength="200" placeholder="Try local AI or video" /></div>
+      <div><label class="field-label" for="catalog-category">Category</label><select class="field" id="catalog-category" name="category"><option value="">All categories</option>{catalogCategories.map((category) => <option value={category}>{category === 'ai' ? 'AI' : category[0].toUpperCase() + category.slice(1)}</option>)}</select></div>
+      <button class="button" type="submit">Search</button>
+      <button class="button button-secondary" type="reset">Clear filters</button>
+    </form>
+    <noscript><p>All candidates are listed below. Browser find can search this page. Interactive filters require JavaScript.</p></noscript>
+    <p id="catalog-count" role="status" aria-live="polite" aria-atomic="true">{apps.length} catalog entries</p>
+    <p id="catalog-empty" hidden>No candidates match. Try fewer words or a different category.</p>
+    <div class="grid" id="catalog-results">{apps.map((app) => <AppCard app={app} />)}</div>
+    <script id="catalog-search-data" type="application/json" set:html={JSON.stringify(searchable).replace(/</g, '\\u003c')} />
+  </section>
+  <script>import '../scripts/catalog-search';</script>
+</SiteLayout>
+<style>
+  .search { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; margin: 2rem 0 1rem; }
+  .search > div:first-child { flex: 2 1 17rem; }
+  .search > div { flex: 1 1 10rem; }
+  .search[hidden] { display: none; }
+</style>
