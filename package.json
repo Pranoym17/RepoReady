@@ -22,7 +22,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "tsx --test packages/contracts/test/*.test.ts packages/catalog-tools/test/*.test.ts services/requests/test/*.test.ts",
+    "test": "tsx --test packages/contracts/test/*.test.ts packages/catalog-tools/test/*.test.ts services/requests/test/*.test.ts tests/*.test.ts",
     "build": "npm run build --workspaces --if-present",
     "schemas:generate": "tsx packages/contracts/scripts/generate.ts",
     "schemas:check": "tsx packages/contracts/scripts/generate.ts --check",
