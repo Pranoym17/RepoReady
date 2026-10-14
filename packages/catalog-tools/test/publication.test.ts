@@ -280,3 +280,63 @@ test("filesystem loader accepts empty approvals and fails closed for incomplete 
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test("filesystem loader authenticates reviewed files and rejects conflicting draft identities", () => {
+  const directory = mkdtempSync(join(tmpdir(), "repoready-m1-approved-"));
+  try {
+    const entry = fixture();
+    // Real-time freshness for the build-time loader, while certification stays in the past.
+    entry.index.issuedAt = new Date(Date.now() - 60000)
+      .toISOString()
+      .replace(/\.\d{3}Z$/, "Z");
+    entry.index.expiresAt = new Date(Date.now() + 86400000)
+      .toISOString()
+      .replace(/\.\d{3}Z$/, "Z");
+    const payload = Buffer.from(JSON.stringify(entry.index));
+    const catalog = join(directory, "catalog");
+    const release = join(catalog, "apps", "ollama", "1.0.0");
+    mkdirSync(release, { recursive: true });
+    writeFileSync(join(release, "presentation.json"), entry.presentationBytes);
+    writeFileSync(join(release, "manifest.json"), entry.detailBytes);
+    writeFileSync(join(release, "evidence.bin"), entry.evidenceBytes);
+    writeFileSync(
+      join(catalog, "index.json"),
+      JSON.stringify({
+        schemaVersion: 1,
+        keyId: "test-only",
+        payload: payload.toString("base64"),
+        signature: sign(
+          null,
+          Buffer.concat([DOMAIN, payload]),
+          privateKey,
+        ).toString("hex"),
+      }),
+    );
+    writeFileSync(
+      join(catalog, "trust-roots.json"),
+      JSON.stringify({
+        schemaVersion: 1,
+        keys: [
+          {
+            id: "test-only",
+            publicKeyPem: publicKey
+              .export({ format: "pem", type: "spki" })
+              .toString(),
+          },
+        ],
+      }),
+    );
+    assert.equal(loadCatalog(directory).releases.length, 1);
+    mkdirSync(join(catalog, "candidates"));
+    writeFileSync(
+      join(catalog, "candidates", "ollama.json"),
+      JSON.stringify(seed),
+    );
+    assert.throws(
+      () => loadCatalog(directory),
+      /duplicate candidate\/approved/,
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
