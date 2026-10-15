@@ -30,6 +30,11 @@ assert.equal(lock.lockfileVersion, 3);
 assert.ok(Object.keys(lock.packages).length > 50);
 const config = json("apps/desktop/src-tauri/tauri.conf.json");
 assert.equal(config.bundle.active, false);
+assert.equal(
+  config.app.windows[0].zoomHotkeysEnabled,
+  true,
+  "Windows WebView2 must allow the planned manual zoom accessibility pass",
+);
 assert.deepEqual(config.app.security.capabilities, ["main"]);
 const capabilities = json("apps/desktop/src-tauri/capabilities/main.json");
 assert.deepEqual(capabilities.windows, ["main"]);
