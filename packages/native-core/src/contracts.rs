@@ -2,6 +2,9 @@ use serde_json::Value;
 
 pub fn validate(name: &str, value: &Value) -> Result<(), String> {
     let source = match name {
+        "DesktopPreferences" => include_str!("../../contracts/schemas/DesktopPreferences.json"),
+        "DesktopSnapshot" => include_str!("../../contracts/schemas/DesktopSnapshot.json"),
+        "ClientReleasePolicy" => include_str!("../../contracts/schemas/ClientReleasePolicy.json"),
         "App" => include_str!("../../contracts/schemas/App.json"),
         "AppVersion" => include_str!("../../contracts/schemas/AppVersion.json"),
         "Artifact" => include_str!("../../contracts/schemas/Artifact.json"),

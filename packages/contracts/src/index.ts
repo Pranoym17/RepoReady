@@ -252,7 +252,96 @@ export const BuildRecipe = z.strictObject({
   }),
   manualProtocol: RelativePath,
 });
+export const DesktopPreferences = z.strictObject({
+  cacheLimitMb: z.number().int().min(16).max(512),
+  logRetentionDays: z.number().int().min(1).max(30),
+});
+export type DesktopPreferences = z.infer<typeof DesktopPreferences>;
+
+export const ClientReleasePolicy = z.strictObject({
+  schemaVersion: z.literal(1),
+  channel: z.enum(["development", "stable"]),
+  sequence: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+  issuedAt: Timestamp,
+  expiresAt: Timestamp,
+  release: z.strictObject({
+    version: Version,
+    target: z.literal("windows-x86_64"),
+    url: HttpsUrl,
+    sha256: Sha256,
+    sizeBytes: z.number().int().positive().max(2147483648),
+    signature: z.string().min(1).max(4096),
+  }),
+  holds: z
+    .array(
+      z.strictObject({ version: Version, reason: z.string().min(1).max(1000) }),
+    )
+    .max(100),
+});
+export type ClientReleasePolicy = z.infer<typeof ClientReleasePolicy>;
+
+export const DesktopSnapshot = z.strictObject({
+  version: Version,
+  mode: z.enum(["development", "stable"]),
+  catalog: z.strictObject({
+    status: z.enum(["not-configured", "fresh", "stale", "offline", "error"]),
+    issuedAt: Timestamp.nullable(),
+    expiresAt: Timestamp.nullable(),
+    lastVerifiedAt: Timestamp.nullable(),
+    sequence: z
+      .number()
+      .int()
+      .positive()
+      .max(Number.MAX_SAFE_INTEGER)
+      .nullable(),
+    items: z.array(App).max(100),
+  }),
+  library: z
+    .array(
+      z.strictObject({
+        appId: Id,
+        version: Version,
+        installedAt: Timestamp,
+        lastLaunchAt: Timestamp.nullable(),
+        updateStatus: z.enum(["unknown", "current", "available", "held"]),
+        sourceSummary: z.string().max(4000),
+      }),
+    )
+    .max(1000),
+  preferences: DesktopPreferences,
+  recoveryRequired: z.boolean(),
+  update: z.strictObject({
+    status: z.enum([
+      "not-configured",
+      "current",
+      "available",
+      "checking",
+      "downloaded",
+      "failed",
+      "restart-required",
+    ]),
+    version: Version.nullable(),
+    messageCode: z
+      .string()
+      .min(1)
+      .max(80)
+      .regex(/^[A-Z][A-Z0-9_]*$/),
+  }),
+  diagnostics: z.strictObject({
+    logBytes: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+  }),
+  capabilities: z.strictObject({
+    manageApps: z.literal(false),
+    requests: z.literal(false),
+  }),
+  lastError: PublicError.nullable(),
+});
+export type DesktopSnapshot = z.infer<typeof DesktopSnapshot>;
+
 export const schemas = {
+  DesktopPreferences,
+  ClientReleasePolicy,
+  DesktopSnapshot,
   App,
   AppVersion,
   Artifact,
