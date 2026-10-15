@@ -184,6 +184,33 @@ impl ClientUpdates {
     pub fn snapshot(&self) -> Value {
         json!({ "status": self.status, "version": self.version, "messageCode": self.message })
     }
+    /// Reconcile only against the trusted compiled running version, never an installer spawn.
+    /// A mismatched version retains recovery guidance instead of retrying an installation.
+    pub fn reconcile_startup(&mut self, running_version: &str) -> Result<(), String> {
+        let channel = self
+            .configuration
+            .as_ref()
+            .map(|value| value.channel.as_str())
+            .unwrap_or("development");
+        if let Some(intent) = self.store.update_intent(channel)? {
+            let stage = intent["stage"].as_str().unwrap_or_default();
+            let intended = intent["version"].as_str().ok_or("UPDATE_STATE_INVALID")?;
+            if ["installing", "recovery-required"].contains(&stage) && intended == running_version {
+                self.store
+                    .save_update_intent(channel, intended, "completed", now()?)?;
+                self.status = if self.configuration.is_some() {
+                    "current"
+                } else {
+                    "not-configured"
+                };
+                self.message = "UPDATE_COMPLETED".into();
+            }
+        }
+        Ok(())
+    }
+    pub fn recovery_required(&self) -> Result<bool, String> {
+        self.store.recovery_required()
+    }
     /// Clone before entering a blocking operation so cancellation does not wait for its Mutex.
     pub fn cancellation_handle(&self) -> Arc<AtomicBool> {
         self.cancelled.clone()
@@ -376,7 +403,7 @@ impl ClientUpdates {
         prepared
             .plugin
             .install(authority.bytes())
-            .map_err(|_| "UPDATE_NATIVE_INSTALL_FAILED")
+            .map_err(|_| "UPDATE_NATIVE_INSTALL_FAILED".to_string())
     }
     fn fail(&mut self, error: String) -> Result<Value, String> {
         self.status = "failed";
