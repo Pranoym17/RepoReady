@@ -7,6 +7,7 @@ import {
 import { entriesFor, type Entry } from "./catalog";
 import {
   nativeAvailable,
+  cancelClientUpdate,
   openProjectPage,
   readSnapshot,
   type Snapshot,
@@ -33,6 +34,11 @@ export function App() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [updateConsent, setUpdateConsent] = useState(false);
+  const [installingUpdate, setInstallingUpdate] = useState(false);
+  const [cancelRequested, setCancelRequested] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState<string>(
+    text.updateInProgress,
+  );
   const main = useRef<HTMLElement>(null);
   const initialNavigation = useRef(true);
 
@@ -52,6 +58,33 @@ export function App() {
       return null;
     } finally {
       setPending(false);
+    }
+  }
+  async function installClientUpdate() {
+    setUpdateConsent(false);
+    setPending(true);
+    setInstallingUpdate(true);
+    setCancelRequested(false);
+    setUpdateMessage(text.updateInProgress);
+    setError(false);
+    setNotice("");
+    try {
+      setSnapshot(await readSnapshot("client_update_install"));
+    } catch {
+      setNotice(text.updateDidNotComplete);
+    } finally {
+      setInstallingUpdate(false);
+      setPending(false);
+    }
+  }
+  async function cancelUpdate() {
+    setCancelRequested(true);
+    try {
+      await cancelClientUpdate();
+      setUpdateMessage(text.updateCancelRequested);
+    } catch {
+      setUpdateMessage(text.updateCancelFailed);
+      setCancelRequested(false);
     }
   }
   useEffect(() => {
@@ -195,8 +228,23 @@ export function App() {
             </div>
           )}
           <div className="operation-status" role="status" aria-live="polite">
-            {pending ? text.working : notice}
+            {installingUpdate ? updateMessage : pending ? text.working : notice}
           </div>
+          {installingUpdate && (
+            <section
+              className="catalog-banner"
+              aria-label="Client update in progress"
+            >
+              <p>{text.updateCancellation}</p>
+              <button
+                className="secondary"
+                disabled={cancelRequested}
+                onClick={() => void cancelUpdate()}
+              >
+                {cancelRequested ? "Cancellation requested" : "Cancel download"}
+              </button>
+            </section>
+          )}
           {screen === "discover" && (
             <>
               <div className="page-heading">
@@ -568,10 +616,7 @@ export function App() {
         <UpdateConfirmation
           pending={pending}
           onCancel={() => setUpdateConsent(false)}
-          onConfirm={async () => {
-            setUpdateConsent(false);
-            await command("client_update_install");
-          }}
+          onConfirm={() => void installClientUpdate()}
         />
       )}
     </div>

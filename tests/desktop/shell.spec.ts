@@ -264,6 +264,75 @@ test("screens reflow and pass automated accessibility checks", async ({
   ).toEqual([]);
 });
 
+test("pending update can request cancellation and failure releases the interface", async ({
+  page,
+}) => {
+  await page.addInitScript(
+    (initial) => {
+      let rejectUpdate: ((reason: Error) => void) | null = null;
+      const calls: string[] = [];
+      Object.defineProperty(window, "isTauri", { value: true });
+      Object.defineProperty(window, "__desktopTestCalls", { value: calls });
+      Object.defineProperty(window, "__TAURI_INTERNALS__", {
+        value: {
+          invoke: async (command: string) => {
+            calls.push(command);
+            if (command === "client_update_install")
+              return new Promise((_resolve, reject) => {
+                rejectUpdate = reject;
+              });
+            if (command === "client_update_cancel") {
+              rejectUpdate?.(new Error("private-native-cancel-detail"));
+              return;
+            }
+            return initial;
+          },
+        },
+      });
+    },
+    {
+      ...snapshot,
+      update: {
+        status: "available",
+        version: "0.1.0-alpha.2",
+        messageCode: "UPDATE_AVAILABLE",
+      },
+    },
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("button", { name: "Review client update" }).click();
+  await page.getByRole("button", { name: "Confirm client update" }).click();
+  await expect(
+    page.getByRole("button", { name: "Save preferences" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByText(/cannot undo an installation that has already started/),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Cancel download", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Save preferences" }),
+  ).toBeEnabled();
+  await expect(page.getByRole("status")).toContainText(
+    "The client update did not complete.",
+  );
+  await expect(
+    page.getByRole("region", { name: "Client update in progress" }),
+  ).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(
+    "private-native-cancel-detail",
+  );
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { __desktopTestCalls: string[] })
+          .__desktopTestCalls,
+    ),
+  ).toContain("client_update_cancel");
+});
+
 test("held native descriptions disclose missing release data without installer authority", async ({
   page,
 }) => {

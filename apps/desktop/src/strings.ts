@@ -52,4 +52,13 @@ export const text = {
     "Install the approved RepoReady client update? Application management remains unavailable.",
   updateConsent:
     "This changes the RepoReady client. Confirm only when you are ready to install the approved update.",
+  updateInProgress: "Preparing the approved client update…",
+  updateCancellation:
+    "Cancellation can stop the download before the installer starts. It cannot undo an installation that has already started.",
+  updateCancelRequested:
+    "Cancellation requested. Waiting for the native update operation to finish.",
+  updateCancelFailed:
+    "Cancellation could not be requested. Keep the client open while the update operation finishes.",
+  updateDidNotComplete:
+    "The client update did not complete. Check its status before trying again. A cancellation request does not undo an installer that has already started.",
 } as const;

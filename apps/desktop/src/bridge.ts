@@ -63,3 +63,8 @@ export async function openProjectPage(
   if (!nativeAvailable) throw new Error("Native action unavailable");
   await invoke("open_project_page", { page });
 }
+
+export async function cancelClientUpdate(): Promise<void> {
+  if (!nativeAvailable) throw new Error("Native action unavailable");
+  await invoke("client_update_cancel");
+}
