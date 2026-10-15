@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "RepoReady",
+  "version": "0.1.0",
+  "identifier": "io.github.pranoym17.repoready",
+  "build": {
+    "beforeBuildCommand": "node src-tauri/packaging/check-profile.mjs stable && npm run build"
+  },
+  "bundle": {
+    "active": false,
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "allowDowngrades": false,
+      "certificateThumbprint": null,
+      "timestampUrl": null,
+      "tsp": true,
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": false },
+      "nsis": {
+        "installMode": "currentUser",
+        "startMenuFolder": "RepoReady",
+        "languages": ["English"],
+        "installerHooks": "./packaging/hooks.nsh"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [],
+      "pubkey": "",
+      "requireSignedVersion": true,
+      "windows": { "installMode": "basicUi" }
+    }
+  }
+}

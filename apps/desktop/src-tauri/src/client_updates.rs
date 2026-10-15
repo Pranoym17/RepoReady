@@ -400,6 +400,9 @@ impl ClientUpdates {
             "installing",
             now()?,
         )?;
+        if self.cancelled.load(Ordering::SeqCst) {
+            return Err("UPDATE_CANCELLED".into());
+        }
         prepared
             .plugin
             .install(authority.bytes())
@@ -417,5 +420,39 @@ impl ClientUpdates {
             "UPDATE_POLICY_REJECTED".into()
         };
         Err(self.message.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn checked_in_authority_is_disabled_and_never_needs_a_plugin_or_network() {
+        assert!(PinnedConfiguration::load().unwrap().is_none());
+        let root = tempfile::tempdir().unwrap();
+        let updates = ClientUpdates::new(root.path()).unwrap();
+        assert_eq!(updates.snapshot()["status"], "not-configured");
+        assert!(!updates.recovery_required().unwrap());
+    }
+    #[test]
+    fn startup_only_completes_an_installer_when_running_its_intended_version() {
+        for (stage, current, expected) in [
+            ("installing", "0.1.0-alpha.2", "completed"),
+            ("installing", "0.1.0-alpha.1", "recovery-required"),
+            ("downloading", "0.1.0-alpha.2", "interrupted"),
+        ] {
+            let root = tempfile::tempdir().unwrap();
+            let store = Store::open(root.path()).unwrap();
+            store
+                .save_update_intent("development", "0.1.0-alpha.2", stage, 1)
+                .unwrap();
+            drop(store);
+            let mut updates = ClientUpdates::new(root.path()).unwrap();
+            updates.reconcile_startup(current).unwrap();
+            assert_eq!(
+                updates.store.update_intent("development").unwrap().unwrap()["stage"],
+                expected
+            );
+        }
     }
 }
