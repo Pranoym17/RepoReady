@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
-import { FoundationNotice } from "@repoready/ui";
+import { App } from "./App";
+import "./styles.css";
 const root = document.getElementById("root");
 if (!root) throw new Error("Application root missing");
-createRoot(root).render(<FoundationNotice />);
+createRoot(root).render(<App />);
