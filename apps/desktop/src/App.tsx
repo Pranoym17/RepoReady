@@ -224,7 +224,7 @@ export function App() {
           {snapshot?.lastError && (
             <div className="alert" role="alert">
               A local operation could not finish safely. Reference:{" "}
-              {snapshot.lastError.code}. No application action was performed.
+              {snapshot.lastError.code}. The operation could not be completed.
             </div>
           )}
           <div className="operation-status" role="status" aria-live="polite">

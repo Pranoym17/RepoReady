@@ -19,7 +19,7 @@ use tauri::{AppHandle, Manager};
 pub struct Runtime {
     store: Store,
     source: Option<CatalogSource>,
-    updates: ClientUpdates,
+    updates: Result<ClientUpdates, String>,
     version: String,
     mode: &'static str,
 }
@@ -56,9 +56,12 @@ pub fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             )?),
             None => None,
         };
-        let mut updates = ClientUpdates::new(&root.join("client-updates"))?;
         let version = app.package_info().version.to_string();
-        updates.reconcile_startup(&version)?;
+        // An updater-state failure must not disable the separate Library or Settings.
+        let updates = ClientUpdates::new(&root.join("client-updates")).and_then(|mut updates| {
+            updates.reconcile_startup(&version)?;
+            Ok(updates)
+        });
         log(&store, Code::Started, Component::Desktop);
         Ok(Runtime {
             store,
@@ -74,17 +77,32 @@ pub fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     })();
     let cancellation = runtime
         .as_ref()
-        .map(|r| r.updates.cancellation_handle())
-        .unwrap_or_else(|_| Arc::new(AtomicBool::new(true)));
+        .ok()
+        .and_then(|r| r.updates.as_ref().ok())
+        .map(|updates| updates.cancellation_handle())
+        .unwrap_or_else(|| Arc::new(AtomicBool::new(true)));
     app.manage(DesktopState(Arc::new(Mutex::new(runtime)), cancellation));
     Ok(())
 }
 fn state(runtime: &Runtime, error: Option<Value>) -> Result<Value, String> {
-    let mut value = desktop::snapshot(&runtime.store, now(), runtime.updates.snapshot(), error)?;
+    let update = runtime
+        .updates
+        .as_ref()
+        .map(|updates| updates.snapshot())
+        .unwrap_or_else(
+            |_| json!({"status":"failed","version":null,"messageCode":"UPDATE_RECOVERY_REQUIRED"}),
+        );
+    let mut value = desktop::snapshot(&runtime.store, now(), update, error)?;
     value["version"] = json!(runtime.version);
     value["mode"] = json!(runtime.mode);
-    value["recoveryRequired"] =
-        json!(runtime.store.recovery_required()? || runtime.updates.recovery_required()?);
+    value["recoveryRequired"] = json!(
+        runtime.store.recovery_required()?
+            || runtime
+                .updates
+                .as_ref()
+                .map(|updates| updates.recovery_required())
+                .unwrap_or(Ok(true))?
+    );
     repoready_core::contracts::validate("DesktopSnapshot", &value)?;
     Ok(value)
 }
@@ -176,7 +194,9 @@ pub async fn client_update_check(app: AppHandle) -> Result<Value, String> {
     run(app, |runtime, handle| {
         let error = runtime
             .updates
-            .check(handle)
+            .as_mut()
+            .map_err(|_| "UPDATE_RECOVERY_REQUIRED".to_string())
+            .and_then(|updates| updates.check(handle))
             .err()
             .map(|_| json!({"code":"DOWNLOAD_FAILED","retryable":true}));
         state(runtime, error)
@@ -197,7 +217,9 @@ pub async fn client_update_install(app: AppHandle, consent: bool) -> Result<Valu
         }
         let error = runtime
             .updates
-            .install(handle, consent)
+            .as_mut()
+            .map_err(|_| "UPDATE_RECOVERY_REQUIRED".to_string())
+            .and_then(|updates| updates.install(handle, consent))
             .err()
             .map(|_| json!({"code":"INSTALL_FAILED","retryable":true}));
         state(runtime, error)
@@ -230,5 +252,26 @@ pub fn open_project_page(page: String) -> Result<(), String> {
     {
         let _ = url;
         Err("UNSUPPORTED_PLATFORM".into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn updater_storage_failure_preserves_independent_desktop_state() {
+        let root = tempfile::tempdir().unwrap();
+        let runtime = Runtime {
+            store: Store::open(root.path()).unwrap(),
+            source: None,
+            updates: Err("STATE_DATABASE_CORRUPT".into()),
+            version: "0.1.0-alpha.1".into(),
+            mode: "development",
+        };
+        let value = state(&runtime, None).unwrap();
+        assert_eq!(value["update"]["status"], "failed");
+        assert_eq!(value["recoveryRequired"], true);
+        assert_eq!(value["preferences"]["cacheLimitMb"], 64);
+        assert!(value["library"].as_array().unwrap().is_empty());
     }
 }
