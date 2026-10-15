@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "purpose": "M0-M2 acceptance checklist; never installation or release authority",
+  "checks": [
+    {
+      "id": "owner-decisions",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "isolated-build-and-test-environment",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "protected-signing-backup-and-restore",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "supported-msvc-package-build",
+      "owner": "agent",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "clean-windows-install-restart-offline",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "final-artifact-a-to-b-update",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "update-rejection-cancel-and-recovery",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "uninstall-retain-and-delete-client-state",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "native-path-acl-and-reparse-review",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "web-narrator-keyboard-and-400-percent-zoom",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "native-narrator-keyboard-and-400-percent-zoom",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "native-startup-and-memory-measurements",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "production-signing-identity-pins-and-https",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "final-commit-hosted-ci-and-repository-protection",
+      "owner": "joint",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "id": "maintainer-m0-m2-sign-off",
+      "owner": "maintainer",
+      "status": "pending",
+      "evidence": null
+    }
+  ]
+}

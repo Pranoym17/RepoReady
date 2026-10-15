@@ -31,6 +31,10 @@
     "web:static": "node scripts/check-web.mjs",
     "web:eval": "playwright test",
     "desktop:eval": "playwright test --config playwright.desktop.config.ts",
+    "client:acceptance": "node apps/desktop/src-tauri/packaging/acceptance.mjs",
+    "client:preflight": "powershell -NoProfile -File scripts/windows-preflight.ps1",
+    "client:private-build": "powershell -NoProfile -File scripts/build-private-client.ps1",
+    "client:sign-policy": "tsx packages/catalog-tools/scripts/sign-client-policy.ts",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run schemas:check && npm test && npm run policy:check && npm run catalog:lint && npm run build && npm run web:static"
   },
   "devDependencies": {
