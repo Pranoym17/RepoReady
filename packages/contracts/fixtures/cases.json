@@ -1,5 +1,78 @@
 [
   {
+    "name": "accept native desktop preferences",
+    "schema": "DesktopPreferences",
+    "valid": true,
+    "value": { "cacheLimitMb": 64, "logRetentionDays": 7 }
+  },
+  {
+    "name": "reject out of bounds desktop preferences",
+    "schema": "DesktopPreferences",
+    "valid": false,
+    "value": { "cacheLimitMb": 513, "logRetentionDays": 7 }
+  },
+  {
+    "name": "reject frontend filesystem preference",
+    "schema": "DesktopPreferences",
+    "valid": false,
+    "value": { "cacheLimitMb": 64, "logRetentionDays": 7, "cachePath": "C:/" }
+  },
+  {
+    "name": "accept minimal disabled desktop snapshot",
+    "schema": "DesktopSnapshot",
+    "valid": true,
+    "value": {
+      "version": "0.1.0-alpha.1",
+      "mode": "development",
+      "catalog": {
+        "status": "not-configured",
+        "issuedAt": null,
+        "expiresAt": null,
+        "lastVerifiedAt": null,
+        "sequence": null,
+        "items": []
+      },
+      "library": [],
+      "preferences": { "cacheLimitMb": 64, "logRetentionDays": 7 },
+      "recoveryRequired": false,
+      "update": {
+        "status": "not-configured",
+        "version": null,
+        "messageCode": "UPDATE_NOT_CONFIGURED"
+      },
+      "diagnostics": { "logBytes": 0 },
+      "capabilities": { "manageApps": false, "requests": false },
+      "lastError": null
+    }
+  },
+  {
+    "name": "accept client policy shape without implying signature authority",
+    "schema": "ClientReleasePolicy",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "channel": "development",
+      "sequence": 1,
+      "issuedAt": "2026-10-15T00:00:00Z",
+      "expiresAt": "2026-10-16T00:00:00Z",
+      "release": {
+        "version": "0.1.0-alpha.2",
+        "target": "windows-x86_64",
+        "url": "https://example.org/fixtures/0.1.0-alpha.2/update.exe",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sizeBytes": 128,
+        "signature": "public-test-placeholder-no-authority"
+      },
+      "holds": []
+    }
+  },
+  {
+    "name": "reject unsupported client policy schema",
+    "schema": "ClientReleasePolicy",
+    "valid": false,
+    "value": { "schemaVersion": 2 }
+  },
+  {
     "name": "accept Requirements fixture",
     "schema": "Requirements",
     "valid": true,

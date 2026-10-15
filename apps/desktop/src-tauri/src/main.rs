@@ -1,13 +1,24 @@
 #[cfg(feature = "desktop")]
-#[tauri::command]
-fn foundation_status() -> &'static str {
-    "foundation-only-no-installation"
-}
+mod client_updates;
+#[cfg(feature = "desktop")]
+mod commands;
 
 #[cfg(feature = "desktop")]
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![foundation_status])
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .setup(commands::setup)
+        .invoke_handler(tauri::generate_handler![
+            commands::desktop_state,
+            commands::catalog_refresh,
+            commands::preferences_save,
+            commands::catalog_cache_clear,
+            commands::client_update_check,
+            commands::client_update_install,
+            commands::client_update_cancel,
+            commands::diagnostics_clear,
+            commands::open_project_page
+        ])
         .run(tauri::generate_context!())
         .expect("Application failed");
 }

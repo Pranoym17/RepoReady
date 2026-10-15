@@ -70,6 +70,30 @@ fn fresh_restart_preferences_and_no_seed_library() {
     }
 }
 #[test]
+fn untrusted_cache_never_hides_independent_library_and_settings() {
+    let root = tempfile::tempdir().unwrap();
+    let mut store = Store::open(root.path()).unwrap();
+    let (envelope, details, keys, now) = fixture(2, false);
+    store
+        .accept_catalog(&envelope, &details, &keys, now)
+        .unwrap();
+    connection(root.path()).execute("INSERT INTO installed_apps(app_id,version,artifact_sha256,install_path,install_method,installed_at,source_summary,ownership_marker) VALUES('test-only','1.0.0',?,'test-only path','managed-folder','2026-10-01T00:00:00Z','fixture','test-only')",[sha256(b"test artifact")]).unwrap();
+    // Simulate a removed trust root without deleting signed cache or replay state.
+    store.set_catalog_keys(BTreeMap::new());
+    let value = repoready_core::desktop::snapshot(
+        &store,
+        now,
+        repoready_core::desktop::unavailable_update(),
+        None,
+    )
+    .unwrap();
+    assert_eq!(value["catalog"]["status"], "error");
+    assert_eq!(value["library"].as_array().unwrap().len(), 1);
+    assert_eq!(value["preferences"]["cacheLimitMb"], 64);
+    assert_eq!(value["lastError"]["code"], "UNTRUSTED_CATALOG");
+    assert_eq!(store.trust_state().unwrap().highest_sequence, 2);
+}
+#[test]
 fn m0_upgrade_online_backup_and_operation_reconciliation() {
     let root = tempfile::tempdir().unwrap();
     let db = connection(root.path());

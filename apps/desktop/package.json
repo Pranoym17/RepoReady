@@ -1,11 +1,12 @@
 {
   "name": "@repoready/desktop",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "tauri": "tauri"
   },

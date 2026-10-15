@@ -1,6 +1,16 @@
 {
   "identifier": "main",
-  "description": "Bundled main window can read development status only.",
+  "description": "Bundled main window can use typed desktop state and reviewed client commands. No generic process, filesystem, URL or updater authority.",
   "windows": ["main"],
-  "permissions": ["allow-foundation-status"]
+  "permissions": [
+    "allow-desktop-state",
+    "allow-catalog-refresh",
+    "allow-preferences-save",
+    "allow-catalog-cache-clear",
+    "allow-client-update-check",
+    "allow-client-update-install",
+    "allow-client-update-cancel",
+    "allow-diagnostics-clear",
+    "allow-open-project-page"
+  ]
 }

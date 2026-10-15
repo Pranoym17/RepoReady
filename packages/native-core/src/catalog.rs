@@ -28,9 +28,15 @@ pub struct VerifiedCatalog {
 impl VerifiedCatalog {
     /// Descriptive access to already authenticated metadata; execution still
     /// requires current detail verification and the native adapter boundary.
-    pub fn index(&self) -> &Value { &self.index }
-    pub fn issued_at(&self) -> i64 { self.issued_at }
-    pub fn expires_at(&self) -> i64 { self.expires_at }
+    pub fn index(&self) -> &Value {
+        &self.index
+    }
+    pub fn issued_at(&self) -> i64 {
+        self.issued_at
+    }
+    pub fn expires_at(&self) -> i64 {
+        self.expires_at
+    }
     pub fn digest(&self) -> &str {
         &self.digest
     }

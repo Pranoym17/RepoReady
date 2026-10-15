@@ -3093,13 +3093,15 @@ dependencies = [
 
 [[package]]
 name = "repoready-desktop"
-version = "0.0.0"
+version = "0.1.0-alpha.1"
 dependencies = [
  "repoready-core",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-updater",
+ "tempfile",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
