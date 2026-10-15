@@ -573,6 +573,24 @@ fn migrate(connection: &mut Connection, root: &Path) -> Result<(), String> {
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)
             .map_err(error)?;
         tx.execute_batch(DESKTOP).map_err(error)?;
+        let legacy: Option<String> = tx
+            .query_row(
+                "SELECT value FROM preferences WHERE name='cache_limit_mb'",
+                [],
+                |row| row.get(0),
+            )
+            .optional()
+            .map_err(error)?;
+        if let Some(limit) = legacy
+            .and_then(|value| value.parse::<u64>().ok())
+            .filter(|value| (16..=512).contains(value))
+        {
+            tx.execute(
+                "UPDATE desktop_settings SET value=? WHERE singleton=1",
+                [json!({"cacheLimitMb":limit,"logRetentionDays":7}).to_string()],
+            )
+            .map_err(error)?;
+        }
         tx.execute(
             "INSERT INTO migration_checksums VALUES(1,?),(2,?)",
             params![

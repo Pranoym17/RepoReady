@@ -437,3 +437,46 @@ fn library_survives_cache_clear_and_log_retention_is_applied() {
         1
     );
 }
+
+#[test]
+fn retained_online_backup_can_be_restored_to_a_separate_owned_root() {
+    let original = tempfile::tempdir().unwrap();
+    let db = connection(original.path());
+    db.execute_batch(BASE).unwrap();
+    db.execute("INSERT INTO preferences VALUES('cache_limit_mb','256')", [])
+        .unwrap();
+    drop(db);
+    drop(Store::open(original.path()).unwrap());
+    let restored = tempfile::tempdir().unwrap();
+    let mut db = connection(restored.path());
+    db.restore(
+        "main",
+        original.path().join("state.backup.sqlite"),
+        None::<fn(rusqlite::backup::Progress)>,
+    )
+    .unwrap();
+    assert_eq!(
+        db.query_row(
+            "SELECT value FROM preferences WHERE name='cache_limit_mb'",
+            [],
+            |row| row.get::<_, String>(0)
+        )
+        .unwrap(),
+        "256"
+    );
+    drop(db);
+    let store = Store::open(restored.path()).unwrap();
+    assert_eq!(store.preferences().unwrap()["cacheLimitMb"], 256);
+}
+
+#[cfg(unix)]
+#[test]
+fn symbolic_state_roots_are_refused() {
+    use std::os::unix::fs::symlink;
+    let container = tempfile::tempdir().unwrap();
+    let target = tempfile::tempdir().unwrap();
+    let link = container.path().join("redirected");
+    symlink(target.path(), &link).unwrap();
+    assert!(Store::open(&link).is_err());
+    assert!(fs::read_dir(target.path()).unwrap().next().is_none());
+}
