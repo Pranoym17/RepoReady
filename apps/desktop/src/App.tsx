@@ -34,6 +34,7 @@ export function App() {
   const [category, setCategory] = useState("");
   const [updateConsent, setUpdateConsent] = useState(false);
   const main = useRef<HTMLElement>(null);
+  const initialNavigation = useRef(true);
 
   async function command(
     name: SnapshotCommand,
@@ -57,6 +58,10 @@ export function App() {
     void command("desktop_state");
   }, []);
   useEffect(() => {
+    if (initialNavigation.current) {
+      initialNavigation.current = false;
+      return;
+    }
     main.current?.focus();
   }, [screen, selected]);
   const entries = useMemo(() => entriesFor(snapshot), [snapshot]);
