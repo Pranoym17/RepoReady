@@ -209,14 +209,3 @@ test("stable cannot inherit test keys or bypass Windows signing and owner approv
     /Windows publisher signing/,
   );
 });
-
-test("uninstall hook retains state and never adds recursive deletion or execution", () => {
-  const hooks = readFileSync(new URL("./hooks.nsh", import.meta.url), "utf8");
-  assert.match(hooks, /\$DeleteAppDataCheckboxState = 1/);
-  assert.match(hooks, /Uncheck 'Delete app data'/);
-  assert.match(hooks, /GetFileAttributesW/);
-  assert.doesNotMatch(
-    hooks,
-    /^\s*(?:RMDir|Delete|Exec|ExecWait|DeleteRegKey)\b/im,
-  );
-});

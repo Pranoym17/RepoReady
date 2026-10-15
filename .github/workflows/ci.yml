@@ -48,6 +48,15 @@ jobs:
         run: cargo check -p repoready-desktop --features desktop --locked
       - if: runner.os == 'Windows'
         run: cargo test -p repoready-desktop --features desktop --locked
+      - name: Compile installer hooks without executing an installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path .cache -Force | Out-Null
+          Invoke-WebRequest -Uri 'https://github.com/tauri-apps/binary-releases/releases/download/nsis-3.11/nsis-3.11.zip' -OutFile .cache/nsis-check.zip
+          if ((Get-FileHash -LiteralPath .cache/nsis-check.zip -Algorithm SHA256).Hash -ne 'C7D27F780DDB6CFFB4730138CD1591E841F4B7EDB155856901CDF5F214394FA1') { throw 'NSIS checksum mismatch' }
+          Expand-Archive -LiteralPath .cache/nsis-check.zip -DestinationPath .cache/nsis-check
+          ./scripts/check-nsis-hooks.ps1 -MakeNsisPath .cache/nsis-check/nsis-3.11/makensis.exe
   dependencies:
     runs-on: ubuntu-24.04
     steps:

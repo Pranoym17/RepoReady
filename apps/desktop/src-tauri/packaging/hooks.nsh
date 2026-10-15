@@ -1,5 +1,5 @@
-; Uses Tauri's upstream NSIS template. No custom recursive deletion, installer process,
-; prerequisite download, registry manipulation, or state removal is added here.
+; Uses Tauri's upstream NSIS template. State deletion is delegated to the bounded native
+; ownership-checked helper. Never use the upstream recursive app-data deletion.
 ; Actual installer/runtime testing is deferred until the owner approves a clean test device.
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
@@ -43,11 +43,27 @@
 
 !macro NSIS_HOOK_PREUNINSTALL
   !insertmacro REPOREADY_GUARD_INSTALL_ROOT
-  ; Tauri exposes this checkbox. Its built-in state deletion uses recursive removal;
-  ; reject the destructive choice until owned-root deletion has real device evidence.
-  ; Leaving it unchecked retains Library, settings, logs and all user-generated data.
+  ; Preserve state during updates and by default. Only explicit data-removal consent
+  ; invokes the helper, which accepts no path argument and never removes applications.
   ${If} $DeleteAppDataCheckboxState = 1
-    MessageBox MB_ICONSTOP "Removing saved state is not supported in this development build. Uncheck 'Delete app data' to uninstall and retain your Library and settings."
-    Abort
+  ${AndIf} $UpdateMode <> 1
+    !insertmacro CheckIfAppIsRunning "$INSTDIR\${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+    Push $0
+    ClearErrors
+    ExecWait '"$INSTDIR\${MAINBINARYNAME}.exe" --remove-client-state' $0
+    ${If} ${Errors}
+      Pop $0
+      MessageBox MB_ICONSTOP "RepoReady could not start its saved-state cleanup. Uninstall stopped. Your applications and documents have not been selected for removal."
+      Abort
+    ${EndIf}
+    ${If} $0 != 0
+      Pop $0
+      MessageBox MB_ICONSTOP "RepoReady could not safely remove all of its saved state. Unknown or locked files were preserved. Close RepoReady or uncheck 'Delete app data' and try again."
+      Abort
+    ${EndIf}
+    Pop $0
+    ; Suppress upstream RmDir /r for both roaming and local app data. The helper
+    ; removes only its known state files and preserves all unknown root content.
+    StrCpy $DeleteAppDataCheckboxState 0
   ${EndIf}
 !macroend
