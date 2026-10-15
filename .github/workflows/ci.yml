@@ -46,6 +46,8 @@ jobs:
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - if: runner.os == 'Windows'
         run: cargo check -p repoready-desktop --features desktop --locked
+      - if: runner.os == 'Windows'
+        run: cargo test -p repoready-desktop --features desktop --locked
   dependencies:
     runs-on: ubuntu-24.04
     steps:
