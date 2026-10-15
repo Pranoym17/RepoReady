@@ -1,4 +1,5 @@
 use crate::client_updates::ClientUpdates;
+use crate::update_cancel::CancellationSlot;
 use repoready_core::{
     desktop,
     diagnostics::{Code, Component, Event},
@@ -8,10 +9,7 @@ use repoready_core::{
 use serde_json::{Value, json};
 use std::{
     collections::BTreeMap,
-    sync::{
-        Arc, Mutex,
-        atomic::{AtomicBool, Ordering},
-    },
+    sync::{Arc, Mutex},
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Manager};
@@ -23,7 +21,7 @@ pub struct Runtime {
     version: String,
     mode: &'static str,
 }
-pub struct DesktopState(Arc<Mutex<Result<Runtime, String>>>, Arc<AtomicBool>);
+pub struct DesktopState(Arc<Mutex<Result<Runtime, String>>>, CancellationSlot);
 fn log(store: &Store, code: Code, component: Component) {
     let _ = store.log_event(Event { code, component });
 }
@@ -75,13 +73,10 @@ pub fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             },
         })
     })();
-    let cancellation = runtime
-        .as_ref()
-        .ok()
-        .and_then(|r| r.updates.as_ref().ok())
-        .map(|updates| updates.cancellation_handle())
-        .unwrap_or_else(|| Arc::new(AtomicBool::new(true)));
-    app.manage(DesktopState(Arc::new(Mutex::new(runtime)), cancellation));
+    app.manage(DesktopState(
+        Arc::new(Mutex::new(runtime)),
+        CancellationSlot::default(),
+    ));
     Ok(())
 }
 fn state(runtime: &Runtime, error: Option<Value>) -> Result<Value, String> {
@@ -96,7 +91,8 @@ fn state(runtime: &Runtime, error: Option<Value>) -> Result<Value, String> {
     value["version"] = json!(runtime.version);
     value["mode"] = json!(runtime.mode);
     value["recoveryRequired"] = json!(
-        runtime.store.recovery_required()?
+        value["recoveryRequired"] == true
+            || runtime.store.recovery_required()?
             || runtime
                 .updates
                 .as_ref()
@@ -191,12 +187,16 @@ pub async fn diagnostics_clear(app: AppHandle) -> Result<Value, String> {
 }
 #[tauri::command]
 pub async fn client_update_check(app: AppHandle) -> Result<Value, String> {
-    run(app, |runtime, handle| {
+    let operation = app.state::<DesktopState>().1.begin()?;
+    run(app, move |runtime, handle| {
         let error = runtime
             .updates
             .as_mut()
             .map_err(|_| "UPDATE_RECOVERY_REQUIRED".to_string())
-            .and_then(|updates| updates.check(handle))
+            .and_then(|updates| {
+                updates.bind_cancellation(operation.flag());
+                updates.check(handle)
+            })
             .err()
             .map(|_| json!({"code":"DOWNLOAD_FAILED","retryable":true}));
         state(runtime, error)
@@ -204,12 +204,16 @@ pub async fn client_update_check(app: AppHandle) -> Result<Value, String> {
     .await
 }
 #[tauri::command]
-pub fn client_update_cancel(app: AppHandle) {
+pub fn client_update_cancel(app: AppHandle) -> Result<(), String> {
     // Never wait for the blocking download's mutex to request cancellation.
-    app.state::<DesktopState>().1.store(true, Ordering::SeqCst);
+    app.state::<DesktopState>().1.cancel()
 }
 #[tauri::command]
 pub async fn client_update_install(app: AppHandle, consent: bool) -> Result<Value, String> {
+    if !consent {
+        return Err("UPDATE_CONSENT_REQUIRED".into());
+    }
+    let operation = app.state::<DesktopState>().1.begin()?;
     run(app, move |runtime, handle| {
         // This command is issued only after the renderer's explicit confirmation dialog.
         if !consent {
@@ -219,7 +223,10 @@ pub async fn client_update_install(app: AppHandle, consent: bool) -> Result<Valu
             .updates
             .as_mut()
             .map_err(|_| "UPDATE_RECOVERY_REQUIRED".to_string())
-            .and_then(|updates| updates.install(handle, consent))
+            .and_then(|updates| {
+                updates.bind_cancellation(operation.flag());
+                updates.install(handle, consent)
+            })
             .err()
             .map(|_| json!({"code":"INSTALL_FAILED","retryable":true}));
         state(runtime, error)

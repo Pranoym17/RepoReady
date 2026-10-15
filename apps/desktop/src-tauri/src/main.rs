@@ -2,6 +2,8 @@
 mod client_updates;
 #[cfg(feature = "desktop")]
 mod commands;
+#[cfg(feature = "desktop")]
+mod update_cancel;
 
 #[cfg(feature = "desktop")]
 fn main() {

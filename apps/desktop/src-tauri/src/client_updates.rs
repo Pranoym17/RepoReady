@@ -211,16 +211,15 @@ impl ClientUpdates {
     pub fn recovery_required(&self) -> Result<bool, String> {
         self.store.recovery_required()
     }
-    /// Clone before entering a blocking operation so cancellation does not wait for its Mutex.
-    pub fn cancellation_handle(&self) -> Arc<AtomicBool> {
-        self.cancelled.clone()
+    /// The command registers this operation-specific token BEFORE queuing blocking work.
+    pub fn bind_cancellation(&mut self, flag: Arc<AtomicBool>) {
+        self.cancelled = flag;
     }
 
     pub fn check(&mut self, app: &AppHandle) -> Result<Value, String> {
         if self.configuration.is_none() {
             return Ok(self.snapshot());
         }
-        self.cancelled.store(false, Ordering::SeqCst);
         self.status = "checking";
         self.prepared = None;
         self.version = None;
@@ -334,7 +333,6 @@ impl ClientUpdates {
         let Some(prepared) = self.prepared.take() else {
             return Err("UPDATE_CHECK_REQUIRED".into());
         };
-        self.cancelled.store(false, Ordering::SeqCst);
         let result = self.install_prepared(app, &prepared);
         if let Err(error) = result {
             if let Some(configuration) = &self.configuration {
