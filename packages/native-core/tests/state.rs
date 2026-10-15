@@ -447,13 +447,12 @@ fn library_survives_cache_clear_and_log_retention_is_applied() {
             component: Component::Desktop,
         })
         .unwrap();
-    let file = fs::File::options()
-        .write(true)
-        .open(root.path().join("events.log"))
-        .unwrap();
-    file.set_times(fs::FileTimes::new().set_modified(std::time::SystemTime::UNIX_EPOCH))
-        .unwrap();
-    drop(file);
+    // Retention follows the event timestamp, even though this file was just modified.
+    fs::write(
+        root.path().join("events.log"),
+        b"{\"timestamp\":1,\"event\":{\"code\":\"STARTED\",\"component\":\"desktop\"}}\n",
+    )
+    .unwrap();
     assert_eq!(store.log_bytes().unwrap(), 0);
     drop(store);
     assert_eq!(

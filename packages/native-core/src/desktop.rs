@@ -19,8 +19,12 @@ pub fn snapshot(
     let cache_result = store.cache_snapshot(now);
     let cache_failed = cache_result.is_err();
     let cache = cache_result.unwrap_or_else(|_| json!({"status":"error","apps":[]}));
+    let logs = store.log_bytes();
+    let logs_failed = logs.is_err();
     let error = error
         .or_else(|| cache_failed.then(|| json!({"code":"UNTRUSTED_CATALOG","retryable":true})));
+    let error = error
+        .or_else(|| logs_failed.then(|| json!({"code":"RECOVERY_REQUIRED","retryable":false})));
     let library = store.library()?.into_iter().map(|item| json!({
         "appId":item["appId"],"version":item["version"],"installedAt":item["installedAt"],
         "lastLaunchAt":item["lastLaunchAt"],"updateStatus":item["updateStatus"],
@@ -44,8 +48,8 @@ pub fn snapshot(
             "status":match cache["status"].as_str() {Some("verified")=>"fresh",Some("stale")=>"stale",Some("error")=>"error",_=>"not-configured"},
             "issuedAt":timestamp(cache["issuedAt"].as_i64()),"expiresAt":timestamp(cache["expiresAt"].as_i64()),
             "lastVerifiedAt":timestamp(cache["acceptedAt"].as_i64()),"sequence":cache["sequence"],"items":items
-        },"library":library,"preferences":store.preferences()?,"recoveryRequired":store.recovery_required()?,
-        "update":update,"diagnostics":{"logBytes":store.log_bytes()?},
+        },"library":library,"preferences":store.preferences()?,"recoveryRequired":store.recovery_required()?||logs_failed,
+        "update":update,"diagnostics":{"logBytes":logs.unwrap_or(0)},
         "capabilities":{"manageApps":false,"requests":false},"lastError":error
     });
     contracts::validate("DesktopSnapshot", &value)?;
@@ -93,6 +97,21 @@ mod tests {
             project_page("source")
                 .unwrap()
                 .starts_with("https://github.com/")
+        );
+    }
+    #[test]
+    fn damaged_logs_do_not_hide_settings_and_can_be_explicitly_cleared() {
+        let root = tempfile::tempdir().unwrap();
+        let store = Store::open(root.path()).unwrap();
+        std::fs::write(root.path().join("events.log"), vec![b'x'; 65537]).unwrap();
+        let value = snapshot(&store, 1_792_022_400, unavailable_update(), None).unwrap();
+        assert_eq!(value["preferences"]["cacheLimitMb"], 64);
+        assert_eq!(value["recoveryRequired"], true);
+        assert_eq!(value["lastError"]["code"], "RECOVERY_REQUIRED");
+        store.clear_logs().unwrap();
+        assert_eq!(
+            snapshot(&store, 1_792_022_400, unavailable_update(), None).unwrap()["recoveryRequired"],
+            false
         );
     }
 }
