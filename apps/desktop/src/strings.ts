@@ -13,6 +13,9 @@ export const text = {
   loading: "Reading local state…",
   bridgeError:
     "RepoReady could not safely read its local state. No application action was performed. Try again or open support.",
+  renderErrorTitle: "RepoReady needs to reload",
+  renderError:
+    "The interface could not finish displaying this screen. Reload the client to read its saved state again. No application installer was started.",
   working: "Working…",
   recovery:
     "Local recovery is required. Application management is unavailable. Keep your data and contact support before continuing.",

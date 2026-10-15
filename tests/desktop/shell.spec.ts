@@ -29,12 +29,18 @@ async function mockNative(page: Page, value: unknown = snapshot) {
   await page.addInitScript((initial: unknown) => {
     let state = initial;
     const calls: string[] = [];
+    const consents: unknown[] = [];
     Object.defineProperty(window, "isTauri", { value: true });
     Object.defineProperty(window, "__desktopTestCalls", { value: calls });
+    Object.defineProperty(window, "__desktopTestConsents", { value: consents });
     Object.defineProperty(window, "__TAURI_INTERNALS__", {
       value: {
-        invoke: async (command: string, args?: { preferences: unknown }) => {
+        invoke: async (
+          command: string,
+          args?: { preferences?: unknown; consent?: boolean },
+        ) => {
           calls.push(command);
+          if (command === "client_update_install") consents.push(args?.consent);
           if (
             command === "preferences_save" &&
             args &&
@@ -207,6 +213,13 @@ test("client update requires explicit confirmation before IPC", async ({
       ),
     )
     .toBe(true);
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { __desktopTestConsents: unknown[] })
+          .__desktopTestConsents,
+    ),
+  ).toEqual([true]);
 });
 
 test("screens reflow and pass automated accessibility checks", async ({
@@ -249,4 +262,59 @@ test("screens reflow and pass automated accessibility checks", async ({
         .analyze()
     ).violations,
   ).toEqual([]);
+});
+
+test("held native descriptions disclose missing release data without installer authority", async ({
+  page,
+}) => {
+  const app = {
+    id: "held-test",
+    slug: "held-test",
+    name: "Held test application",
+    summary: "Test-only descriptive fixture.",
+    description:
+      "A held release must remain descriptive and cannot offer application actions.",
+    category: "utilities",
+    tags: ["test"],
+    sourceUrl: "https://github.com/test/held",
+    upstreamAuthor: "Test fixture",
+    licenseSpdx: "MIT",
+    status: "paused",
+    screenshots: ["https://example.org/screenshot.png"],
+    requirements: {
+      minWindowsBuild: 22000,
+      minRamMb: 1024,
+      diskMb: 100,
+      gpuNotes: "No GPU required.",
+      internetRequired: false,
+      externalApiProviders: [],
+      apiChargesDisclosed: true,
+      extraDownloadBytes: 0,
+    },
+    verifiedAt: "2026-10-14T12:00:00Z",
+    supportUrl: "https://github.com/test/held/issues",
+  };
+  await mockNative(page, {
+    ...snapshot,
+    catalog: {
+      ...snapshot.catalog,
+      status: "stale",
+      lastVerifiedAt: "2026-10-14T12:00:00Z",
+      items: [app],
+    },
+  });
+  await page.goto("/");
+  await expect(page.getByText(/Cached catalog has expired/)).toBeVisible();
+  await page.getByRole("button", { name: app.name, exact: true }).click();
+  await expect(page.getByText("Paused", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(/does not include release-specific standalone/),
+  ).toBeVisible();
+  await expect(page.getByText(/lists 1 screenshot references/)).toBeVisible();
+  await expect(page.locator("img")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", {
+      name: /^Install |^Launch |^Uninstall |^Repair /,
+    }),
+  ).toHaveCount(0);
 });

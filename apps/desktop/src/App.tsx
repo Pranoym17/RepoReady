@@ -706,7 +706,30 @@ function Detail({
           </dl>
         )}
         <p>{text.standalone}</p>
+        {!draft && (
+          <p>
+            <strong>Distribution requirements:</strong> This catalog descriptor
+            does not include release-specific standalone or managed-runtime
+            information. Do not assume this package works independently. No
+            application installation is available in this release.
+          </p>
+        )}
       </section>
+      {!draft && (
+        <section className="panel prose">
+          <h2>Screenshots and release information</h2>
+          <p>
+            Remote screenshot previews are unavailable in this development
+            build. This catalog lists {verified?.screenshots.length ?? 0}{" "}
+            screenshot references; images are not downloaded here.
+          </p>
+          <p>
+            Release version and package details are not included in this catalog
+            descriptor. These must be reviewed before a later client can offer
+            installation.
+          </p>
+        </section>
+      )}
       {draft && (
         <>
           <section className="panel prose">

@@ -324,6 +324,11 @@ main {
 .muted {
   color: var(--color-muted);
 }
+.fatal-state {
+  max-width: 50rem;
+  margin: 4rem auto;
+  padding: 2rem;
+}
 .empty-state {
   text-align: center;
   border: 1px dashed var(--color-border);

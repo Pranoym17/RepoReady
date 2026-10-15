@@ -40,7 +40,14 @@ export async function readSnapshot(
   preferences?: DesktopPreferences,
 ): Promise<Snapshot> {
   const result: unknown = nativeAvailable
-    ? await invoke(command, preferences ? { preferences } : undefined)
+    ? await invoke(
+        command,
+        command === "client_update_install"
+          ? { consent: true }
+          : preferences
+            ? { preferences }
+            : undefined,
+      )
     : preview;
   const parsed = DesktopSnapshot.parse(result);
   if (!nativeAvailable && command === "preferences_save" && preferences) {
