@@ -9,6 +9,11 @@ use reqwest::Url;
 use semver::Version;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    io::Read,
+    sync::atomic::{AtomicBool, Ordering},
+    time::Duration,
+};
 
 pub const DOMAIN: &[u8] = b"repoready.client-update.v1:";
 pub const TARGET: &str = "windows-x86_64";
@@ -28,6 +33,163 @@ impl UpdatePolicyKeys {
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
+    pub fn from_hex_pinned(keys: &BTreeMap<String, String>) -> Result<Self, String> {
+        let mut parsed = BTreeMap::new();
+        for (id, encoded) in keys {
+            if id.is_empty()
+                || id.len() > 100
+                || !id
+                    .bytes()
+                    .all(|c| c.is_ascii_alphanumeric() || b"-_.".contains(&c))
+            {
+                return Err("UPDATE_CONFIGURATION_INVALID".into());
+            }
+            let public: [u8; 32] = hex::decode(encoded)
+                .map_err(|_| "UPDATE_CONFIGURATION_INVALID")?
+                .try_into()
+                .map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+            VerifyingKey::from_bytes(&public).map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+            parsed.insert(id.clone(), public);
+        }
+        Ok(Self(parsed))
+    }
+    pub fn ensure_independent_artifact_key(&self, encoded: &str) -> Result<(), String> {
+        let outer = STANDARD
+            .decode(encoded)
+            .map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+        let text = std::str::from_utf8(&outer).map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+        PublicKey::decode(text).map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+        let raw = STANDARD
+            .decode(text.lines().nth(1).ok_or("UPDATE_CONFIGURATION_INVALID")?)
+            .map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+        if raw.len() != 42 || self.0.values().any(|key| key.as_slice() == &raw[10..]) {
+            return Err("UPDATE_KEY_ROLES_NOT_INDEPENDENT".into());
+        }
+        Ok(())
+    }
+}
+
+/// All update network I/O is capped here. The Tauri adapter restores its small manifest
+/// directly from the authenticated policy and never calls the plugin's remote check/download.
+pub struct UpdateTransport {
+    client: reqwest::blocking::Client,
+}
+impl UpdateTransport {
+    pub fn new() -> Result<Self, String> {
+        let client = reqwest::blocking::Client::builder()
+            .https_only(true)
+            .redirect(reqwest::redirect::Policy::none())
+            .connect_timeout(Duration::from_secs(5))
+            .timeout(Duration::from_secs(120))
+            .no_proxy()
+            .user_agent("RepoReady client updater")
+            .build()
+            .map_err(|_| "UPDATE_NETWORK_UNAVAILABLE")?;
+        Ok(Self { client })
+    }
+    pub fn fetch_policy(&self, endpoint: &str, cancel: &AtomicBool) -> Result<Vec<u8>, String> {
+        validate_policy_endpoint(endpoint)?;
+        self.fetch(endpoint, MAX_POLICY_BYTES as u64, None, cancel)
+    }
+    pub fn download_artifact(
+        &self,
+        policy: &VerifiedClientUpdate,
+        cancel: &AtomicBool,
+    ) -> Result<Vec<u8>, String> {
+        self.fetch(
+            policy.url(),
+            policy.size_bytes(),
+            Some(policy.size_bytes()),
+            cancel,
+        )
+    }
+    fn fetch(
+        &self,
+        endpoint: &str,
+        limit: u64,
+        exact_size: Option<u64>,
+        cancel: &AtomicBool,
+    ) -> Result<Vec<u8>, String> {
+        if cancel.load(Ordering::SeqCst) {
+            return Err("UPDATE_CANCELLED".into());
+        }
+        let mut response = self
+            .client
+            .get(endpoint)
+            .send()
+            .map_err(|_| "UPDATE_NETWORK_UNAVAILABLE")?;
+        if !response.status().is_success() {
+            return Err("UPDATE_HTTP_FAILED".into());
+        }
+        if response
+            .headers()
+            .get(reqwest::header::CONTENT_ENCODING)
+            .is_some_and(|v| v != "identity")
+        {
+            return Err("UPDATE_ENCODING_UNSUPPORTED".into());
+        }
+        if response
+            .content_length()
+            .is_some_and(|length| length > limit || exact_size.is_some_and(|size| length != size))
+        {
+            return Err("UPDATE_DOWNLOAD_SIZE_MISMATCH".into());
+        }
+        let mut bytes = Vec::new();
+        let mut buffer = [0; 65536];
+        loop {
+            if cancel.load(Ordering::SeqCst) {
+                return Err("UPDATE_CANCELLED".into());
+            }
+            let read = response
+                .read(&mut buffer)
+                .map_err(|_| "UPDATE_NETWORK_UNAVAILABLE")?;
+            if read == 0 {
+                break;
+            }
+            if (bytes.len() as u64).saturating_add(read as u64) > limit {
+                return Err("UPDATE_DOWNLOAD_TOO_LARGE".into());
+            }
+            bytes
+                .try_reserve(read)
+                .map_err(|_| "UPDATE_MEMORY_UNAVAILABLE")?;
+            bytes.extend_from_slice(&buffer[..read]);
+        }
+        if exact_size.is_some_and(|size| size != bytes.len() as u64) {
+            return Err("UPDATE_DOWNLOAD_SIZE_MISMATCH".into());
+        }
+        Ok(bytes)
+    }
+}
+
+pub fn validate_policy_endpoint(endpoint: &str) -> Result<(), String> {
+    let url = Url::parse(endpoint).map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+    let host = url.host_str().ok_or("UPDATE_CONFIGURATION_INVALID")?;
+    if url.scheme() != "https"
+        || url.port().is_some_and(|v| v != 443)
+        || !url.username().is_empty()
+        || url.password().is_some()
+        || url.query().is_some()
+        || url.fragment().is_some()
+        || host == "localhost"
+        || host.parse::<std::net::IpAddr>().is_ok()
+        || !host.contains('.')
+        || [".test", ".invalid", ".example", ".localhost"]
+            .iter()
+            .any(|suffix| host.ends_with(suffix))
+        || ["example.com", "example.org", "example.net"].contains(&host)
+    {
+        return Err("UPDATE_CONFIGURATION_INVALID".into());
+    }
+    Ok(())
+}
+
+pub fn validate_artifact_origin(origin: &str) -> Result<(), String> {
+    validate_policy_endpoint(origin)?;
+    let url = Url::parse(origin).map_err(|_| "UPDATE_CONFIGURATION_INVALID")?;
+    if origin != url.origin().ascii_serialization() {
+        return Err("UPDATE_CONFIGURATION_INVALID".into());
+    }
+    Ok(())
 }
 
 /// Persist atomically with accepted policy bytes, independently for each update channel.
@@ -802,5 +964,82 @@ mod tests {
         ));
         let changed = verify(&fresh).unwrap();
         assert!(authorize_install(&prepared, &changed, &artifact, NOW, true).is_err());
+    }
+
+    #[test]
+    fn key_roles_and_production_endpoints_are_separate_and_pinned() {
+        assert!(
+            keys()
+                .ensure_independent_artifact_key(&artifact_public())
+                .is_ok()
+        );
+        assert!(
+            keys()
+                .ensure_independent_artifact_key(&signed_artifact(&policy_key(), BYTES, NEXT).0)
+                .is_err()
+        );
+        for endpoint in [
+            "http://updates.repoready.org/policy",
+            "https://127.0.0.1/policy",
+            "https://localhost/policy",
+            "https://updates.test/policy",
+            "https://example.com/policy",
+            "https://user@updates.repoready.org/policy",
+            "https://updates.repoready.org:444/policy",
+            "https://updates.repoready.org/policy?q=secret",
+        ] {
+            assert!(validate_policy_endpoint(endpoint).is_err());
+        }
+        assert!(
+            validate_policy_endpoint("https://updates.repoready.org/development/policy.json")
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn bounded_transport_rejects_redirect_encoding_oversize_truncation_and_cancellation() {
+        use std::{io::Write, net::TcpListener, thread};
+        fn response(bytes: Vec<u8>) -> (String, thread::JoinHandle<()>) {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let endpoint = format!("http://{}/artifact", listener.local_addr().unwrap());
+            let server = thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                let mut request = [0; 2048];
+                let _ = stream.read(&mut request);
+                let _ = stream.write_all(&bytes);
+            });
+            (endpoint, server)
+        }
+        // HTTP relaxation exists ONLY inside this unit-test-local client.
+        let transport = UpdateTransport {
+            client: reqwest::blocking::Client::builder()
+                .redirect(reqwest::redirect::Policy::none())
+                .timeout(Duration::from_secs(1))
+                .no_proxy()
+                .build()
+                .unwrap(),
+        };
+        let cancel = AtomicBool::new(false);
+        for raw in [
+            b"HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1:1/\r\nContent-Length: 0\r\n\r\n"
+                .to_vec(),
+            b"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Length: 2\r\n\r\n{}".to_vec(),
+            b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\n".to_vec(),
+            b"HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n12345678901234567890".to_vec(),
+            b"HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\na".to_vec(),
+        ] {
+            let (url, server) = response(raw);
+            assert!(transport.fetch(&url, 10, None, &cancel).is_err());
+            server.join().unwrap();
+        }
+        let (url, server) = response(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n{}".to_vec());
+        assert_eq!(transport.fetch(&url, 10, Some(2), &cancel).unwrap(), b"{}");
+        server.join().unwrap();
+        cancel.store(true, Ordering::SeqCst);
+        assert!(
+            transport
+                .fetch("http://127.0.0.1:1/", 10, None, &cancel)
+                .is_err()
+        );
     }
 }

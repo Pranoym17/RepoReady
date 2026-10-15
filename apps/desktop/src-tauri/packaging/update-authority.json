@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "enabled": false,
+  "channel": "development",
+  "policyEndpoint": null,
+  "policyKeys": {},
+  "artifactOrigins": [],
+  "artifactPublicKey": null
+}
