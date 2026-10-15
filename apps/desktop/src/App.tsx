@@ -13,7 +13,7 @@ import {
   type Snapshot,
   type SnapshotCommand,
 } from "./bridge";
-import { text } from "./strings";
+import { text, explainError } from "./strings";
 
 type Screen = keyof typeof text.nav;
 const statusLabels: Record<string, string> = {
@@ -224,7 +224,7 @@ export function App() {
           {snapshot?.lastError && (
             <div className="alert" role="alert">
               A local operation could not finish safely. Reference:{" "}
-              {snapshot.lastError.code}. The operation could not be completed.
+              {explainError(snapshot.lastError.code)}
             </div>
           )}
           <div className="operation-status" role="status" aria-live="polite">

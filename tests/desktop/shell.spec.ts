@@ -175,6 +175,23 @@ test("malformed native responses fail safely without rendering sensitive error d
   ).toHaveCount(0);
 });
 
+test("failed update guidance is actionable without claiming an installer never started", async ({
+  page,
+}) => {
+  await mockNative(page, {
+    ...snapshot,
+    lastError: { code: "INSTALL_FAILED", retryable: true },
+  });
+  await page.goto("/");
+  await expect(page.getByRole("alert")).toContainText(
+    "Check the installed version and update status before trying again",
+  );
+  await expect(page.locator("body")).not.toContainText("INSTALL_FAILED");
+  await expect(page.locator("body")).not.toContainText(
+    "No application installer was started",
+  );
+});
+
 test("client update requires explicit confirmation before IPC", async ({
   page,
 }) => {
