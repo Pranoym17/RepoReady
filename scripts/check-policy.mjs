@@ -33,9 +33,26 @@ assert.equal(config.bundle.active, false);
 assert.deepEqual(config.app.security.capabilities, ["main"]);
 const capabilities = json("apps/desktop/src-tauri/capabilities/main.json");
 assert.deepEqual(capabilities.windows, ["main"]);
-assert.deepEqual(capabilities.permissions, ["allow-foundation-status"]);
+assert.deepEqual(capabilities.permissions, [
+  "allow-desktop-state",
+  "allow-catalog-refresh",
+  "allow-preferences-save",
+  "allow-catalog-cache-clear",
+  "allow-client-update-check",
+  "allow-client-update-install",
+  "allow-client-update-cancel",
+  "allow-diagnostics-clear",
+  "allow-open-project-page",
+]);
 assert.equal(capabilities.remote, undefined);
-assert.equal(config.plugins, undefined);
+assert.deepEqual(config.plugins, {
+  updater: {
+    pubkey: "",
+    endpoints: [],
+    requireSignedVersion: true,
+    windows: { installMode: "basicUi" },
+  },
+});
 assert.equal(
   readdirSync("catalog/apps").filter((f) => f.endsWith(".json")).length,
   0,

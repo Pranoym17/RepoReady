@@ -3,7 +3,7 @@ useDefault = true
 
 [[allowlists]]
 description = "Generated dependencies, build output and workspace-local verification tools"
-paths = ['''(^|[\\/])(\.cache|node_modules|target|dist|\.git)([\\/]|$)''']
+paths = ['''(^|[\\/])(\.cache|\.worktrees|node_modules|target|dist|\.git)([\\/]|$)''']
 
 [[allowlists]]
 description = "Public deterministic request-id UUID in shared schema fixtures, not an API key"

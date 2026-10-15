@@ -8,7 +8,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
-  workers: 3,
+  workers: process.platform === "win32" ? 1 : 3,
   timeout: 60_000,
   outputDir: ".cache/web-test-results",
   reporter: [["list"], ["json", { outputFile: ".cache/web-evaluation.json" }]],

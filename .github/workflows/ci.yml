@@ -31,6 +31,7 @@ jobs:
         env:
           PLAYWRIGHT_BROWSERS_PATH: .cache/playwright
       - run: npm run web:eval
+      - run: npm run desktop:eval
       - run: npm audit --audit-level=high
   rust:
     strategy:
